@@ -1,3 +1,20 @@
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.wrapper {
+	position: relative;
+	min-height: 100%;
+}
+
+
 .header {
     min-width: 400px;
     width: 100%;
@@ -24,13 +41,12 @@
     margin-left: 50px;
 }
 
-.container {
-    height: 800px;
-}
-
 .endpage {
     width: 100%;
     height: 100px;
+    left: 0;
+    bottom: 0;
+    margin-bottom: 0;
     background-color: rgba(0, 0, 0, .75);
     color: aliceblue;
     display: flex;
@@ -39,7 +55,7 @@
 }
 
 .socials {
-    margin-top: 15px;
+    margin-top: 25px;
     margin-left: 30px;
     width: 50px;
     height: 70px;
