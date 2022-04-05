@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for, request
+from werkzeug.security import generate_password_hash
 from App.Config import Config
 from App.settings import *
 
@@ -11,13 +12,14 @@ def index():
     return render_template("base.html", css=url_for('static', filename='css/index.css'))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['post', 'get'])
 def login():
     if request.method == 'POST':
-        return 'login'
-
+        email = request.form.get('email')
+        password = request.form.get('pass')
+        print(email, "\n", generate_password_hash(password))
+        return "login"
     return render_template("login.html", title='Авторизация', css=url_for('static', filename='css/login.css'))
-
 
 
 if __name__ == '__main__':

@@ -5,4 +5,28 @@
     border-radius: 15px;
     border: 1px outset black;
     padding: 20px 20px;
+    justify-content: center;
+}
+
+.email {
+    margin-top: 25px;
+}
+
+.register {
+    margin-top: 10px;
+    text-align: center;
+    width: auto;
+}
+
+.passLabel {
+    margin-top: 20px;
+}
+
+.fieldInput {
+    width: 250px;
+}
+
+.btn-login {
+    margin-top: 20px;
+    margin-bottom: 0;
 }
