@@ -9,20 +9,21 @@
             Авторизация
         </h3>
         <div class="fieldInput email">
-            <label for="exampleFormControlInput1" class="form-label">Логин или почта</label>
-            <input type="email" class="fieldInput form-control" id="inputEmail" placeholder="name@example.com" name="email">
+            <label for="inputEmail" class="form-label">Логин или почта</label>
+            <input type="text" class="fieldInput form-control" id="inputEmail" placeholder="name@example.com" name="email">
         </div>
         <div class="fieldInput password">
             <label for="inputPassword" class="passLabel form-label">Пароль</label>
             <input type="password" class="fieldInput form-control" id="inputPassword" name="pass">
         </div>
         <div class="register">Нет аккаунта? 
-            <a class="register_text" href="">
+            <a class="register_text" href="/register">
                 Зарегестрироваться
             </a>
         </div>
         <div class="submit">
             <button type="submit" class="btn-login btn btn-primary">Войти</button>
+            <div class="forgot"><a href="/recovery">Забыли пароль?</a></div>
         </div>
     </form>
 {% endblock %}

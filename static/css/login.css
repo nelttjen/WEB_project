@@ -4,7 +4,7 @@
     margin: 200px auto;
     border-radius: 15px;
     border: 1px outset black;
-    padding: 20px 20px;
+    padding: 20px;
     justify-content: center;
 }
 
@@ -29,4 +29,11 @@
 .btn-login {
     margin-top: 20px;
     margin-bottom: 0;
+}
+
+.submit {
+    padding: 0 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 }

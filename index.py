@@ -22,6 +22,13 @@ def login():
     return render_template("login.html", title='Авторизация', css=url_for('static', filename='css/login.css'))
 
 
+@app.route('/register', methods=['post', 'get'])
+def register():
+    ref = request.args.get('ref') if request.args.get('ref') else -1
+
+    return render_template('register.html', title='Регистрация', css=url_for('static', filename='css/register.css'))
+
+
 if __name__ == '__main__':
     config.set('SECRET_KEY', SECRET_KEY)
     print(config.get('SECRET_KEY'))
