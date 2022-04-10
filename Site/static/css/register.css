@@ -1,6 +1,6 @@
 .register {
     font-family: sans-serif;
-    margin: 100px auto;
+    margin: 50px auto;
     padding: 20px;
     width: 450px;
     height: auto;
@@ -63,8 +63,29 @@
 
 .submit-button:hover {
     color: white;
-    background-color: #0d6efd;
-    border: 1px solid greenyellow;
+    background-color: #0d6dfd;
+    border: 1px solid #0d6efd;
     border-radius: 0.65rem;
 
+}
+
+.info {
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: #e00000;
+}
+
+.referal {
+    margin-top: 25px;
+}
+
+.has-account {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.ref-input::-webkit-inner-spin-button, .ref-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

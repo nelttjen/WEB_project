@@ -80,3 +80,6 @@ body {
     font-family: 'Red Hat Mono', monospace;
 }
 
+.container {
+    position: relative;
+}
