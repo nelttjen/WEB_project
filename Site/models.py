@@ -20,4 +20,11 @@ class User(db.Model, UserMixin):
     orders_id = db.Column(db.String)
     current_orders = db.Column(db.String)
 
-    account_type = db.Column(db.Integer, nullable=False)
+
+class Booster(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+
+    output_balance = db.Column(db.Float, default=0)
+    boost_orders_id = db.Column(db.String)
+    current_boost_orders = db.Column(db.String)

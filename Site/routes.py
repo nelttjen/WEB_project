@@ -1,5 +1,5 @@
 from flask import render_template, url_for, request, redirect
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from Site import app
 
@@ -12,4 +12,4 @@ def index():
 @app.route('/test')
 @login_required
 def test():
-    return "logged"
+    return current_user.get_id()
