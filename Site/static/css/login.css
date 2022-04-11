@@ -1,39 +1,15 @@
 .login {
-    width: 300px;
+    width: 450px;
     height: auto;
     margin: 200px auto;
     border-radius: 15px;
     border: 1px outset black;
     padding: 20px;
-    justify-content: center;
+    font-family: sans-serif;
 }
 
-.email {
-    margin-top: 25px;
-}
-
-.register {
+.info {
     margin-top: 10px;
-    text-align: center;
-    width: auto;
-}
-
-.passLabel {
-    margin-top: 20px;
-}
-
-.fieldInput {
-    width: 250px;
-}
-
-.btn-login {
-    margin-top: 20px;
     margin-bottom: 0;
-}
-
-.submit {
-    padding: 0 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    color: #e00000;
 }

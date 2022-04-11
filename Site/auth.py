@@ -17,10 +17,10 @@ def login():
         user_login = request.form.get('login')
         password = request.form.get('pass')
         user_db = User.query.filter_by(login=user_login).first()
-        print(user_login)
         if user_db and check_password_hash(user_db.password, password):
             login_user(user_db)
-        return redirect(url_for('index'))
+        else:
+            flash("Логин или пароль неверны")
     return render_template("login.html", title='Авторизация', css=url_for('static', filename='css/login.css'))
 
 
@@ -35,10 +35,13 @@ def register():
         if day == 29 and month == 2 and year % 4:
             day = 28
         refer = request.form.get("refer") if request.form.get("refer") else -1
-        new_user = User(login=user_login, password=user_password, email="",
-                        parent=refer, referals="", day=day, month=month, year=year)
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            new_user = User(login=user_login, password=user_password,
+                            parent=refer, day=day, month=month, year=year)
+            db.session.add(new_user)
+            db.session.commit()
+        except Exception as e:
+            print(e.__class__)
         return 'register'
 
     return render_template('register.html', title='Регистрация', css=url_for('static', filename='css/register.css'),
