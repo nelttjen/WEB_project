@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: content-box;
+}
+
 html {
     height: 100%;
 }
@@ -9,17 +15,12 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
-.wrapper {
-	position: relative;
-	min-height: 100%;
-}
-
-
 .header {
     min-width: 400px;
     width: 100%;
     height: 60px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, .2);
+    padding: 0.5rem 1.25rem;
     background-color: palegreen;
     display: flex;
     justify-content: space-between;
@@ -44,9 +45,6 @@ body {
 .endpage {
     width: 100%;
     height: 100px;
-    left: 0;
-    bottom: 0;
-    margin-bottom: 0;
     background-color: rgba(0, 0, 0, .75);
     color: aliceblue;
     display: flex;
@@ -73,3 +71,6 @@ body {
     font-family: 'Red Hat Mono', monospace;
 }
 
+.container {
+    position: relative;
+}

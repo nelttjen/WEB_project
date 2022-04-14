@@ -1,0 +1,1 @@
+function validate() {if (!$("#inputLogin").val()||!$("#inputPassword").val()) {alert("Введите логин и пароль");return false;}return true;}

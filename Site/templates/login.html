@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{css|safe}}">
+    <script src="../static/js/login.js"></script>
+    <script src="../static/js/showPassword.js"></script>
+{% endblock %}
+{% block container %}
+    <div class="login">
+        <h3 class="autozire">
+            Авторизация
+        </h3>
+        <p class="info" id="info">
+            {{info|safe}}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </p>
+        <form action="" method="post" enctype="multipart/form-data" onsubmit="return validate();">
+            <div class="fieldInput email">
+                <label for="inputLogin" class="form-label">Логин</label>
+                <input type="text" class="fieldInput form-control" id="inputLogin" placeholder="Введите логин" name="login" value={{login}}>
+            </div>
+            <div class="fieldInput password">
+                <label for="inputPassword" class="passLabel form-label">Пароль</label>
+                <input type="password" class="fieldInput passInput form-control" id="inputPassword" placeholder="Введите пароль" name="pass">
+                <p class="show-pass" style="margin-top: 5px;">
+                    <input type="checkbox" id="check-show-pass" style="cursor: pointer;" onclick="showPassword();">
+                    <button type="button" style="cursor:pointer; margin-top: 3px; border: 0; background: none; user-select: none;" onclick="document.getElementById('check-show-pass').checked=!document.getElementById('check-show-pass').checked; showPassword();">Показать пароль</button>
+                </p>
+            </div>
+            <div class="register">Нет аккаунта? 
+                <a class="register_text" href="/register">
+                    Зарегестрироваться
+                </a>
+            </div>
+            <div class="submit">
+                <button type="submit" class="submit-button">Войти</button>
+            </div>
+            <div class="forgot" style="margin-top: 25px;"><a href="/recovery">Забыли пароль?</a></div>
+        </form>
+    </div>
+{% endblock %}
