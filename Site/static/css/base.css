@@ -15,12 +15,6 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
-.wrapper {
-	position: relative;
-	min-height: 100%;
-}
-
-
 .header {
     min-width: 400px;
     width: 100%;
@@ -51,9 +45,6 @@ body {
 .endpage {
     width: 100%;
     height: 100px;
-    left: 0;
-    bottom: 0;
-    margin-bottom: 0;
     background-color: rgba(0, 0, 0, .75);
     color: aliceblue;
     display: flex;

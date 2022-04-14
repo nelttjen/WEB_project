@@ -6,7 +6,7 @@ from Site import app
 
 @app.route('/')
 def index():
-    return render_template("base.html", css=url_for('static', filename='css/index.css'))
+    return render_template("index.html", css=url_for('static', filename='css/index.css'))
 
 
 @app.route('/test')
