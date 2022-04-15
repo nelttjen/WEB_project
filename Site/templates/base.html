@@ -18,13 +18,19 @@
 <body>
     <nav class="header navbar-dark bg-dark">
         <a href="/" class="logo"><img src="" alt="">Boosting</a>
-        <ul class="mnu_top">
-            <li><a href="/">Игры</a></li>
-            <li><a href="/">Заказы</a></li>
-            <li><a href="/">Бустеры</a></li>
-        </ul>
-        <div class="login_top">
-            <a href="/login"><button class="btn btn-outline-success">Авторизация</button></a>
+        <div class="right">
+            <ul class="mnu_top">
+                <li><a href="/">Игры</a></li>
+                <li><a href="/">Заказы</a></li>
+                <li><a href="/">Бустеры</a></li>
+            </ul>
+            <div class="login_top">
+                {% if not nickname %}
+                <a href="/login"><button class="btn btn-outline-success">Авторизация</button></a>
+                {% else %}
+                <p style="color: white; width: 100%; margin-bottom: 0;">Привет, {{nickname}}</p>
+                {% endif %}
+            </div>
         </div>
     </nav>
     <div class="container" style="padding: 0;">
