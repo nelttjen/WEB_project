@@ -43,7 +43,7 @@ def register():
         user_login = request.form.get("login")
         user_password = generate_password_hash(request.form.get("pass1"))
         day, month, year = [int(request.form.get(key)) for key in ["Day", "Month", "Year"]]
-        if day == 29 and month == 2 and year % 4:
+        if day > 29 and month == 2 and year % 4:
             day = 28
         refer = request.form.get("refer") if request.form.get("refer") else -1
         try:
