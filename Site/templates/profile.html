@@ -26,10 +26,58 @@
                     <input class="form-control" type="file" id="formFile">
                 </div>
             </div>
-            <div class="balance">
-                <h3>Ваш баланс: {{balance}}р.</h3>
-                <input class="form-control" type="number" placeholder="Сумма пополнения" name="topup">
-                <a href="/topup" class="btn btn-primary">Пополнить</a>
+            <div class="balance mb-3">
+                <h3>Ваш баланс: {{balance}} руб</h3>
+                <input class="form-control balance-input" type="number" placeholder="Сумма пополнения" name="topup">
+                <a href="/topup" class="btn btn-primary" style="margin-left: 10px;">Пополнить</a>
+            </div>
+            <div class="email mb-3">
+                <label for="email-input" class="form-label">Ваш Email:</label>
+                <input type="email" id="email-input" class="form-control" placeholder="Ваш Email" {{email}}>
+            </div>
+            <div class="birth mb-3">
+                <p>Дата рождения</p>
+                    <div class="birth-select" style="margin-top: 10px;">
+                        <div class="dayselect left select" id="dayselect">
+                            <select class="form-select" id="select-day" name="Day">
+                                <option value="0">День</option>
+                                {% for index in range(1, 28) %}
+                                <option value="{{index}}">{{index}}</option>
+                                {% endfor %}
+                                <option value="29" id="select29">29</option>
+                                <option value="30" id="select30">30</option>
+                                <option value="31" id="select31">31</option>
+                            </select>
+                            <!-- <span class="select-label">День</span> -->
+                        </div>
+                        <div class="monthselect left select" id="monthselect">
+                            <select class="form-select" id="select-month" name="Month" onchange="selectMonth()">
+                                <option value="0">Месяц</option>
+                                    <option value="1">Январь</option>
+                                    <option value="2">Февраль</option>
+                                    <option value="3">Март</option>
+                                    <option value="4">Апрель</option>
+                                    <option value="5">Май</option>
+                                    <option value="6">Июнь</option>
+                                    <option value="7">Июль</option>
+                                    <option value="8">Август</option>
+                                    <option value="9">Сентябрь</option>
+                                    <option value="10">Октябрь</option>
+                                    <option value="11">Ноябрь</option>
+                                    <option value="12">Декабрь</option>
+                            </select>
+                            <!-- <span class="select-label">Месяц</span> -->
+                        </div>
+                        <div class="yearselect left select" id="yearselect">
+                            <select class="form-select" id="select-year" name="Year">
+                                <option value="0">Год</option>
+                                {% for index in range(2022 - 1897)%}
+                                <option value="{{2022 - index}}">{{2022 - index}}</option>
+                                {% endfor %}
+                            </select>
+                            <!-- <span class="select-label">Год</span> -->
+                        </div>
+                    </div>
             </div>
         </form>
     </div>

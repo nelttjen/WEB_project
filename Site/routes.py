@@ -41,8 +41,11 @@ def profile():
     if request.method == "POST":
         pass
     else:
+        cur_user = User.query.get(current_user.get_id())
+        p_balance = cur_user.balance
         p_image = url_for('static', filename=f'img/profile_images/{current_user.get_id()}.png')
         if not os.path.exists("Site/" + p_image):
             p_image = DEFAULT_PROFILE_IMAGE
         return render_template('profile.html', css=url_for('static', filename="css/profile.css"),
-                               nickname=get_user_nick(), profile_image=p_image)
+                               nickname=get_user_nick(), profile_image=p_image,
+                               balance=p_balance)

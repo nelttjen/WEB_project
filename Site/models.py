@@ -14,7 +14,6 @@ class User(db.Model, UserMixin):
     year = db.Column(db.Integer, nullable=False)
 
     parent = db.Column(db.Integer, default=-1)
-    referals = db.Column(db.String, default="")
 
     balance = db.Column(db.Float, default=0)
     orders_id = db.Column(db.String, default="")

@@ -33,6 +33,11 @@
 }
 
 .balance input {
-    margin-left: 75px;
+    margin-left: 150px;
     width: auto;
+}
+
+.balance-input::-webkit-inner-spin-button, .balance-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
