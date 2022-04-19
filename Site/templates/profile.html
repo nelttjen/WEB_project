@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block head %}
+    {{super()}}
+    <link rel="stylesheet" href={{css|safe}}>
+{% endblock %}
+
+{% block container %}
+    <div class="profile-container">
+        <h1>Профиль пользователя {{nickname}}</h1>
+        <div class="info">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+        <form action="" class="profile" method="post", enctype="multipart/form-data">
+            <div class="avatar">
+                <img src="{{profile_image|safe}}" alt="" class="profile-image">
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Загрузить новую аватарку</label>
+                    <input class="form-control" type="file" id="formFile">
+                </div>
+            </div>
+            <div class="balance">
+                <h3>Ваш баланс: {{balance}}р.</h3>
+                <input class="form-control" type="number" placeholder="Сумма пополнения" name="topup">
+                <a href="/topup" class="btn btn-primary">Пополнить</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

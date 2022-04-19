@@ -8,7 +8,7 @@ from Site.settings import *
 app = Flask(__name__)
 config = Config(app)
 config.set('SQLALCHEMY_DATABASE_URI',
-           yana_db)
+           main_db)
 login_manager = LoginManager(app)
 db = SQLAlchemy(app)
 

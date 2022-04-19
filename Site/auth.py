@@ -68,7 +68,7 @@ def register():
 
 
 @app.route("/logout", methods=["GET", "POST"])
-@login_required
 def logout():
-    logout_user()
+    if current_user.get_id():
+        logout_user()
     return redirect(url_for("login"))

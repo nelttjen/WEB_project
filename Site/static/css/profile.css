@@ -1,0 +1,38 @@
+.profile-container {
+    width: 800px;
+    height: auto;
+    border: 2px solid black;
+    border-radius: 30px;
+    margin: 50px auto;
+    padding: 30px;
+}
+
+.profile-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.info {
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: #e00000;
+}
+
+.profile-image {
+    width: 256px;
+    height: 256px;
+    border: 4px dotted blue;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+    margin-bottom: 15px;
+}
+
+.balance {
+    display: flex;
+}
+
+.balance input {
+    margin-left: 75px;
+    width: auto;
+}
