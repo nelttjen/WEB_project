@@ -19,19 +19,23 @@
     <nav class="header navbar-dark bg-dark">
         <a href="/" class="logo"><img src="" alt="">Boosting</a>
         <ul class="mnu_top">
-            <li><a href="/">Игры</a></li>
-            <li><a href="/">Заказы</a></li>
-            <li><a href="/">Бустеры</a></li>
+            <li><a href="/">lorem</a></li>
+            <li><a href="/">lorem</a></li>
+            <li><a href="/">lorem</a></li>
         </ul>
         <div class="login_top">
+            {% if not nickname %}
             <a href="/login"><button class="btn btn-outline-success">Авторизация</button></a>
+            {% else %}
+            <a href="/profile"><button class="btn btn-outline-success">Личный кабинет</button></a>
+            {% endif %}
         </div>
     </nav>
     <div class="container" style="padding: 0;">
         {% block container %}
         {% endblock %}
     </div>
-    <footer class="endpage">
+    <footer class="endpage" style="padding: 0 20px;">
         <ul class="socials">
             <li><a href="https://vk.com/nelttjen">ВКонтакте</a></li>
             <li><a href="https://github.com/nelttjen">GitHub</a></li>

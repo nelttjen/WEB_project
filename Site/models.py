@@ -14,11 +14,14 @@ class User(db.Model, UserMixin):
     year = db.Column(db.Integer, nullable=False)
 
     parent = db.Column(db.Integer, default=-1)
-    referals = db.Column(db.String, default="")
 
     balance = db.Column(db.Float, default=0)
     orders_id = db.Column(db.String, default="")
     current_orders = db.Column(db.String, default="")
+
+    admin_status = db.Column(db.Integer, default=0)
+    is_banned = db.Column(db.Float, default=False)
+    until = db.Column(db.String, default="")
 
 
 class Booster(db.Model, UserMixin):

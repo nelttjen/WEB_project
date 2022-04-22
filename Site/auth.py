@@ -24,7 +24,7 @@ def login():
         user_db = User.query.filter_by(login=user_login).first()
         if user_db and check_password_hash(user_db.password, password):
             login_user(user_db)
-            return redirect(url_for('test'))
+            return redirect(url_for('profile'))
         else:
             flash("Логин или пароль неверны")
             _login = user_login
@@ -38,28 +38,37 @@ def register():
         return redirect(url_for('index'))
 
     ref = request.args.get('ref')
-    fref = f'''value={ref} disabled''' if ref else ""
+    fref = f'''value={ref} readonly''' if ref else ""
     if request.method == "POST":
         user_login = request.form.get("login")
         user_password = generate_password_hash(request.form.get("pass1"))
         day, month, year = [int(request.form.get(key)) for key in ["Day", "Month", "Year"]]
+        if (day == 30 or day == 31) and month == 2:
+            day = 29
         if day == 29 and month == 2 and year % 4:
             day = 28
-        refer = request.form.get("refer") if request.form.get("refer") else -1
+        refer = request.form.get("referal") if request.form.get("referal") else -1
         try:
             refer_id = int(refer)
         except ValueError:
             refer_id = None
         refer_db = User.query.filter_by(id=refer_id).first()
-        if not refer_db:
+        if not refer_db and refer_id != -1:
             flash("Неверный реферальный код")
+        elif not all([1 <= day <= 31, 1 <= month <= 12, 1898 <= year <= 2022]):
+            flash('Неправильная дата рождения')
         else:
             try:
-                new_user = User(login=user_login, password=user_password,
-                                parent=refer, day=day, month=month, year=year)
+                new_user = User(login=user_login,
+                                password=user_password,
+                                parent=refer,
+                                day=day,
+                                month=month,
+                                year=year)
                 db.session.add(new_user)
                 db.session.commit()
-                return 'register'
+                flash('Регистрация успешна')
+                return redirect(url_for("login"))
             except sqlalchemy.exc.IntegrityError as e:
                 flash("Логин уже занят!")
 
@@ -68,7 +77,16 @@ def register():
 
 
 @app.route("/logout", methods=["GET", "POST"])
-@login_required
 def logout():
-    logout_user()
+    if current_user.get_id():
+        logout_user()
     return redirect(url_for("login"))
+
+
+@app.route('/recovery', methods=["GET", 'POST'])
+def recovery():
+    if current_user.get_id():
+        return redirect('index')
+    if request.method == 'POST':
+        pass
+    return render_template('recovery.html')

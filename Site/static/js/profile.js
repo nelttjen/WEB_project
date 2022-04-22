@@ -1,39 +1,19 @@
-function validate() {
-    var login = $("#login");
-    var pass1 = $("#pass1");
-    var pass2 = $("#pass2");
-    var day = $("#select-day");
-    var month = $("#select-month");
-    var year = $("#select-year");
-    var accept = $("#rule-accepted");
-    if (!login.val()) {
-        alert("Введите логин");
-        return false;
-    } else if (login.val() === pass1.val()){
-        alert("Пароль не может совпадать с логином");
-        return false;
-    } else if (!testLogin(login.val())) {
-        return false;
-    } else if (!checkPassword(pass1, pass2)) {
-        return false;
-    } else if (day.val() === "0" || month.val() === "0" || year.val() === "0") {
-        alert("Выберите дату рождения");
-        return false;
-    } else if (!accept.prop('checked')) {
-        alert("Вы должны быть согласны с правилами сервиса");
-        return false;
-    }
+$("#change-password").click(function () { 
+    $(".password-inputs").toggle(500);
+});
+
+$("#show-select").click(function () { 
+    $(".birth-select ").toggle(500);
+});
+
+function validate_profile() {
+    var change_pass = $('#change-password').prop("checked");
+
+    var pass1 = $('#new-pass');
+    var pass2 = $('#new-pass2');
+    if (change_pass) return checkPassword(pass1, pass2);
     return true;
 }
-
-function testLogin(login) {
-    var r = /[^A-Z-a-z-0-9_]/g; 
-    if (r.test(login)) {
-        alert("В логине введены недопустимые символы. Разрешены латинские буквы, цифры и символ подчеркивания");
-        return false;
-    }
-    return true;
-} 
 
 function checkPassword(passw1, passw2) {
     var min_c = 8;
@@ -83,4 +63,3 @@ function checkPassword(passw1, passw2) {
         return true;
     }
 }
-
