@@ -19,6 +19,10 @@ class User(db.Model, UserMixin):
     orders_id = db.Column(db.String, default="")
     current_orders = db.Column(db.String, default="")
 
+    admin_status = db.Column(db.Integer, default=0)
+    is_banned = db.Column(db.Float, default=False)
+    until = db.Column(db.String, default="")
+
 
 class Booster(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

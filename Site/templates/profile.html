@@ -2,12 +2,15 @@
 {% block head %}
     {{super()}}
     <link rel="stylesheet" href={{css|safe}}>
+    <script async src="../static/js/checkMonth.js"></script>
+    <script async src="../static/js/showPassword.js"></script>
+    <script async src="../static/js/profile.js"></script>
 {% endblock %}
 
 {% block container %}
     <div class="profile-container">
-        <h1>Профиль пользователя {{nickname}}</h1>
-        <div class="info">
+        <h1>Профиль пользователя {{user.login}}</h1>
+        <div class="info mb-4">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
@@ -18,67 +21,105 @@
                 {% endif %}
             {% endwith %}
         </div>
-        <form action="" class="profile" method="post", enctype="multipart/form-data">
+        <form action="" class="profile" method="post", enctype="multipart/form-data" onsubmit="return validate_profile()">
             <div class="avatar">
                 <img src="{{profile_image|safe}}" alt="" class="profile-image">
                 <div class="mb-3">
                     <label for="formFile" class="form-label">Загрузить новую аватарку</label>
-                    <input class="form-control" type="file" id="formFile">
+                    <input class="form-control" type="file" id="formFile" name="file">
                 </div>
             </div>
             <div class="balance mb-3">
-                <h3>Ваш баланс: {{balance}} руб</h3>
-                <input class="form-control balance-input" type="number" placeholder="Сумма пополнения" name="topup">
+                <h3>Ваш баланс: {{user.balance}} руб</h3>
                 <a href="/topup" class="btn btn-primary" style="margin-left: 10px;">Пополнить</a>
             </div>
             <div class="email mb-3">
                 <label for="email-input" class="form-label">Ваш Email:</label>
-                <input type="email" id="email-input" class="form-control" placeholder="Ваш Email" {{email}}>
+                <input name="email" type="email" id="email-input" class="form-control" placeholder="Ваш Email" value="{{user.email}}">
             </div>
-            <div class="birth mb-3">
-                <p>Дата рождения</p>
-                    <div class="birth-select" style="margin-top: 10px;">
-                        <div class="dayselect left select" id="dayselect">
-                            <select class="form-select" id="select-day" name="Day">
-                                <option value="0">День</option>
-                                {% for index in range(1, 28) %}
-                                <option value="{{index}}">{{index}}</option>
-                                {% endfor %}
-                                <option value="29" id="select29">29</option>
-                                <option value="30" id="select30">30</option>
-                                <option value="31" id="select31">31</option>
-                            </select>
-                            <!-- <span class="select-label">День</span> -->
-                        </div>
-                        <div class="monthselect left select" id="monthselect">
-                            <select class="form-select" id="select-month" name="Month" onchange="selectMonth()">
-                                <option value="0">Месяц</option>
-                                    <option value="1">Январь</option>
-                                    <option value="2">Февраль</option>
-                                    <option value="3">Март</option>
-                                    <option value="4">Апрель</option>
-                                    <option value="5">Май</option>
-                                    <option value="6">Июнь</option>
-                                    <option value="7">Июль</option>
-                                    <option value="8">Август</option>
-                                    <option value="9">Сентябрь</option>
-                                    <option value="10">Октябрь</option>
-                                    <option value="11">Ноябрь</option>
-                                    <option value="12">Декабрь</option>
-                            </select>
-                            <!-- <span class="select-label">Месяц</span> -->
-                        </div>
-                        <div class="yearselect left select" id="yearselect">
-                            <select class="form-select" id="select-year" name="Year">
-                                <option value="0">Год</option>
-                                {% for index in range(2022 - 1897)%}
-                                <option value="{{2022 - index}}">{{2022 - index}}</option>
-                                {% endfor %}
-                            </select>
-                            <!-- <span class="select-label">Год</span> -->
-                        </div>
+            <div class="birth">
+                <p style="margin-bottom: 0;">Дата рождения: {{birth}}</p>
+                <div class="show-select-div mt-1 mb-3" >
+                    <input type="checkbox" name="show-select" id="show-select">
+                    <label for="show-select" id="show-select">Изменить дату рождения</label>
+                </div>
+                <div class="birth-select mb-3" style="display: none;">
+                    <div class="dayselect left select" id="dayselect">
+                        <select class="form-select" id="select-day" name="Day" value="3">
+                            <option value="0">День</option>
+                            {% for index in range(1, 29) %}
+                            <option value="{{index}}">{{index}}</option>
+                            {% endfor %}
+                            <option value="29" id="select29">29</option>
+                            <option value="30" id="select30">30</option>
+                            <option value="31" id="select31">31</option>
+                        </select>
                     </div>
+                    <div class="monthselect left select" id="monthselect">
+                        <select class="form-select" id="select-month" name="Month" onchange="selectMonth()">
+                            <option value="0">Месяц</option>
+                                <option value="1">Январь</option>
+                                <option value="2">Февраль</option>
+                                <option value="3">Март</option>
+                                <option value="4">Апрель</option>
+                                <option value="5">Май</option>
+                                <option value="6">Июнь</option>
+                                <option value="7">Июль</option>
+                                <option value="8">Август</option>
+                                <option value="9">Сентябрь</option>
+                                <option value="10">Октябрь</option>
+                                <option value="11">Ноябрь</option>
+                                <option value="12">Декабрь</option>
+                        </select>
+                    </div>
+                    <div class="yearselect left select" id="yearselect">
+                        <select class="form-select" id="select-year" name="Year">
+                            <option value="0">Год</option>
+                            {% for index in range(2022 - 1897)%}
+                            <option value="{{2022 - index}}">{{2022 - index}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
+            <div class="referals mb-3" style="display: block;">
+                <p style="margin-bottom: 0;">Рефералы: {{refs}}</p>
+                <p style="margin-top: 5px;">Ваша реферальная ссылка: <a href="/?ref={{ref_id}}">https://127.0.0.1:8080/?ref={{ref_id}}</a></p>
+            </div>
+            <div class="orders mb-3">
+                <div class="current-orders">
+                    Ваши текущие заказы: {{current_orders}}
+                </div>
+                <div class="completed-orders">
+                    Ваши завершенные заказы: {{completed_orders}}
+                </div>
+            </div>
+            <div class="change-password">
+                <input type="checkbox" name="change-password" id="change-password">
+                <label for="change-password">Изменить пароль</label>
+                <div class="password-inputs" style="display: none;">
+                    <div class="current">
+                        <label for="current-pass">Введите текущий пароль</label>
+                        <input type="password" class="passInput mb-1 form-control" id="current-pass" placeholder="Текущий пароль" name="pass0">
+                    </div>
+                    <div class="new">
+                        <label for="new-pass">Введите новый пароль</label>
+                        <input type="password" class="passInput mb-1 form-control" id="new-pass" placeholder="Новый пароль" name="pass1">
+                    </div>
+                    <div class="new2">
+                        <label for="new-pass2">Повторите новый пароль</label>
+                        <input type="password" class="passInput form-control" id="new-pass2" placeholder="Повторите пароль" name="pass2">
+                    </div>
+                    <p class="show-pass">
+                        <input type="checkbox" id="check-show-pass" style="cursor: pointer;" onclick="showPassword();">
+                        <button type="button" style="cursor:pointer; margin-top: 3px; border: 0; background: none; user-select: none;" onclick="document.getElementById('check-show-pass').checked=!document.getElementById('check-show-pass').checked; showPassword();">Показать пароль</button>
+                    </p>
+                </div>
+            </div>
+            <button type="submit" class="profile-button">
+                Сохранить
+            </button>
+            <a href="/logout" class="profile-button a-button">Выйти из аккаунта</a>
         </form>
     </div>
 {% endblock %}
