@@ -129,3 +129,5 @@ dmypy.json
 # NelttjeN
 .idea
 line_counter.py
+
+/Site/static/img/profile_images/*.png
