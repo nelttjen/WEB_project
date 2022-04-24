@@ -1,6 +1,6 @@
 import sqlalchemy.exc
 from flask import request, render_template, url_for, flash, redirect
-from flask_login import login_required, login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Site import app, login_manager, db
@@ -69,7 +69,7 @@ def register():
                 db.session.commit()
                 flash('Регистрация успешна')
                 return redirect(url_for("login"))
-            except sqlalchemy.exc.IntegrityError as e:
+            except sqlalchemy.exc.IntegrityError:
                 flash("Логин уже занят!")
 
     return render_template('register.html', title='Регистрация', css=url_for('static', filename='css/register.css'),

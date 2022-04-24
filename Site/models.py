@@ -27,7 +27,7 @@ class User(db.Model, UserMixin, SerializerMixin):
     until = db.Column(db.String, default="")
 
 
-class Booster(db.Model, UserMixin):
+class Booster(db.Model, UserMixin, SerializerMixin):
     __tablename__ = 'booster'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -38,7 +38,7 @@ class Booster(db.Model, UserMixin):
     current_boost_orders = db.Column(db.String)
 
 
-class Apikey(db.Model):
+class Apikey(db.Model, SerializerMixin):
     __tablename__ = 'apikeys'
 
     id = db.Column(db.Integer, primary_key=True)

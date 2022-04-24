@@ -1,8 +1,6 @@
 import argparse
-import datetime
 
 from werkzeug.security import generate_password_hash
-
 
 from Site import api, app, db, config, generate_API
 from Site.settings import *
