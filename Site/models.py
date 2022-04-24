@@ -48,5 +48,10 @@ class Apikey(db.Model):
     info = db.Column(db.String)
     access_level = db.Column(db.Integer, nullable=False)
 
+    # access levels:
+    # 1 - moderator
+    # 2 - administrator
+    # 99 - full, autogenerate
+
     creation_date = db.Column(db.String, nullable=False)
     valid_end = db.Column(db.String, nullable=False)

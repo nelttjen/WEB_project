@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--create-superuser', action='store_true')
     parser.add_argument('--create-superapi', action='store_true')
+    parser.add_argument('--get-superapi', action='store_true')
     args = parser.parse_args()
     db.create_all()
     config.set('SECRET_KEY', SECRET_KEY)
@@ -38,4 +39,6 @@ if __name__ == '__main__':
                          valid_end='Unlimited')
         db.session.add(new_api)
         db.session.commit()
+    if args.get_superapi:
+        print([i.apikey for i in Apikey.query.filter_by(access_level=99).all()])
     app.run(port=8080)
