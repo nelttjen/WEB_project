@@ -1,9 +1,12 @@
 from flask_login import UserMixin
+from sqlalchemy_serializer import SerializerMixin
 
 from Site import db
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, SerializerMixin):
+    __tablename__ = 'user'
+
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String, nullable=False, unique=True)
     email = db.Column(db.String, default="")
@@ -25,9 +28,25 @@ class User(db.Model, UserMixin):
 
 
 class Booster(db.Model, UserMixin):
+    __tablename__ = 'booster'
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     output_balance = db.Column(db.Float, default=0)
     boost_orders_id = db.Column(db.String)
     current_boost_orders = db.Column(db.String)
+
+
+class Apikey(db.Model):
+    __tablename__ = 'apikeys'
+
+    id = db.Column(db.Integer, primary_key=True)
+    apikey = db.Column(db.String, unique=True)
+    requestor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    info = db.Column(db.String)
+    access_level = db.Column(db.Integer, nullable=False)
+
+    creation_date = db.Column(db.String, nullable=False)
+    valid_end = db.Column(db.String, nullable=False)
