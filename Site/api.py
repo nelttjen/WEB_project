@@ -20,9 +20,9 @@ def get_and_check_apikey(apikey):
         valid = True
         if apikey.valid_end != 'Unlimited':
             d, m, y = map(int, apikey.valid_end.split('.'))
-            date1 = datetime.datetime.now()
+            date1 = datetime.date.today()
             date2 = datetime.date(y, m, d)
-            if date2 > date1:
+            if date2 < date1:
                 valid = False
                 message = f'Your Apikey expired {date2.strftime("%d.%m.%Y")}. Please, update your Apikey!'
     return apikey, valid, message
@@ -95,13 +95,13 @@ class UserResource(Resource):
             response = {
                 'response': None,
                 'message': message,
-                'status': '404'
+                'status': '401'
             }
         else:
             response = {
                 'response': user.to_dict(only=allowed),
                 'message': f'User with id {user_id}, access level: '
-                           f'''{["User", "Moderator", "Administrator"].index(apikey.access_level) 
+                           f'''{["User", "Moderator", "Administrator"][apikey.access_level] 
                            if apikey.access_level != 99 else "Superuser"}''',
                 'status': '200'
             }

@@ -5,3 +5,4 @@ yana_db = 'sqlite:///C:\\Users\\Яна\\Desktop\\WEB\\data\\newDB.db'
 sharaga_db = 'sqlite:///C:\\Users\\user\\Desktop\\asdf\\wb\\data\\newDB.db'
 DEFAULT_PROFILE_IMAGE = '/static/img/default.jpg'
 APIROUTE = '/api/v1.0'
+MAX_FILE_SIZE = 16 * 1024 * 1024

@@ -1,0 +1,14 @@
+.profile-info {
+    width: 500px;
+    height: auto;
+    border: 2px solid black;
+    border-radius: 30px;
+    margin: 50px auto;
+    padding: 30px;
+}
+
+.info {
+    margin-top: 10px;
+    color: #e00000;
+}
+

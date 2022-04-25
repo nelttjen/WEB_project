@@ -12,7 +12,8 @@ from Site.settings import *
 app = Flask(__name__)
 config = Config(app)
 config.set('SQLALCHEMY_DATABASE_URI',
-           main_db)
+           sharaga_db)
+config.set('MAX_CONTENT_LENGTH', MAX_FILE_SIZE)
 login_manager = LoginManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
