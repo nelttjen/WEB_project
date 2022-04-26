@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block head %}
+    {{super()}}
+    <link rel="stylesheet" href="../static/css/admin_base.css">
+{% endblock %}  
+{% block container %}
+    <div class="admin-panel">
+        {% if not current %}
+        <h1 style="text-align: center;">Админ панель</h1>
+        {% else %}
+        <h1 style="text-align: center;"><a href="/admin" style="color: #000; user-select: none; cursor: pointer; text-decoration: none;">Админ панель</a></h1>
+        {% endif %}
+        <div class="refs">
+            <a href="/admin/topups" class="{% if current == 1 %}current{% else %} submit-button {% endif %} a-button">Пополнения</a>
+            <a href="/admin/users" class="{% if current == 2 %}current{% else %} submit-button {% endif %} a-button">Пользователи</a>
+            <a href="/admin/boosters" class="{% if current == 3 %}current{% else %} submit-button {% endif %} a-button">Бустеры</a>
+            <a href="/admin/orders" class="{% if current == 4 %}current{% else %} submit-button {% endif %} a-button">Заказы</a>
+        </div>
+        {% block panel %}
+        {% endblock %}
+    </div>
+{% endblock %}

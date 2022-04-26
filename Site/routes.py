@@ -2,7 +2,7 @@ import datetime
 import os.path
 
 from flask import render_template, url_for, request, redirect, flash
-from flask_login import current_user
+from flask_login import current_user, login_required
 from datetime import date
 
 from werkzeug.utils import secure_filename

@@ -15,6 +15,7 @@ config.set('SQLALCHEMY_DATABASE_URI',
            main_db)
 config.set('MAX_CONTENT_LENGTH', MAX_FILE_SIZE)
 login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 api = Api(app)
