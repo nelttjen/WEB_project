@@ -50,7 +50,7 @@ def login():
     _login = ""
     if current_user.get_id():
         return redirect(url_for('index'))
-    _class = 'info' if not request.args.get('recovery') and not request.args.get('logout') else 'info-green'
+    _class = 'info' if not any([request.args.get(i) for i in ['recovery', 'logout', 'register']]) else 'info-green'
     if request.method == 'POST':
         user_login = request.form.get('login')
         password = request.form.get('pass')
@@ -100,7 +100,7 @@ def register():
                 db.session.add(new_user)
                 db.session.commit()
                 flash('Регистрация успешна')
-                return redirect(url_for("login"))
+                return redirect(url_for("login", register=1))
             except sqlalchemy.exc.IntegrityError:
                 flash("Логин уже занят!")
 
