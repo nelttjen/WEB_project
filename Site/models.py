@@ -55,3 +55,24 @@ class Apikey(db.Model, SerializerMixin):
 
     creation_date = db.Column(db.String, nullable=False)
     valid_end = db.Column(db.String, nullable=False)
+
+
+class ConfirmCode(db.Model, SerializerMixin):
+    __tablename__ = 'recovery_codes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    login_for = db.Column(db.String, nullable=False)
+    code = db.Column(db.String, nullable=False)
+    creation = db.Column(db.String, nullable=False)
+    valid_mins = db.Column(db.String, nullable=False, default=30)
+
+
+class BalanceRequest(db.Model, SerializerMixin):
+    __tablename__ = 'balance_reqs'
+    id = db.Column(db.Integer, primary_key=True)
+    login_for = db.Column(db.String, nullable=False)
+    sum = db.Column(db.Float, nullable=False)
+    date = db.Column(db.String, nullable=False)
+
+    accepted = db.Column(db.Float, nullable=False, default=False)
+    acceptor_id = db.Column(db.Integer, default=-1)

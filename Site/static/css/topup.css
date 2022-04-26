@@ -1,8 +1,13 @@
-.profile-info {
+.topup {
     width: 500px;
     height: auto;
     border: 2px solid black;
     border-radius: 30px;
     margin: 50px auto;
     padding: 30px;
+}
+
+.num-inp::-webkit-inner-spin-button, .num-inp::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

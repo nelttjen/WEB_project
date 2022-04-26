@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block head %}
+    {{super()}}
+    <link rel="stylesheet" href="{{css|safe}}">
+    <script async src="../static/js/recovery.js"></script>
+    <script async src="../static/js/showPassword.js"></script>
+{% endblock %}
+{% block container %}
+    <div class="recovery-container">
+        <h1>
+            Восстановление пароля
+        </h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+        <form action="" method="post" enctype="multipart/form-data" {% if login %}onsubmit="return recovery_validate()"{% endif %}>
+            {% if not login %}
+            <div class="login">
+                <label for="login" class="form-label"></label>
+                <input type="text" id="login" name="login" class="form-control" placeholder="Ваш логин">
+            </div>
+            {% else %}
+            <div class="password1">
+                <label for="password1" class="form-label">Новый пароль</label>
+                <input type="password" id="password1" name="pass1" class="form-control passInput" placeholder="Новый пароль">
+            </div>
+            <div class="password2">
+                <label for="password2" class="form-label">Повторите пароль</label>
+                <input type="password" id="password2" name="pass2" class="form-control passInput" placeholder="Повторите пароль">
+            </div>
+            <div class="show">
+                <p class="show-pass mb-0 mt-1">
+                    <input type="checkbox" id="check-show-pass" style="cursor: pointer;" onclick="showPassword();">
+                    <button type="button" style="cursor:pointer; margin-top: 3px; border: 0; background: none; user-select: none;" onclick="document.getElementById('check-show-pass').checked=!document.getElementById('check-show-pass').checked; showPassword();">Показать пароль</button>
+                </p>
+            </div>
+            <div class="confirm-code">
+                <label for="confirm" class="form-label">Код подтверждения</label>
+                <input type="number" id="confirm" name="confirm" class="form-control num-inp" placeholder="Код подтверждения">
+                <p class="mt-3">Тут должно быть подтверждение по почте, но его нет, поэтому код: {{code}}</p>
+            </div>
+            {% endif %}
+            <button type="submit" class="submit-button">
+                {% if not login %}
+                Получить код
+                {% else %}
+                Подтвердить
+                {% endif %}
+            </button>
+        </form>
+        <div class="remember mt-4" style="text-align: center;">
+            Я вспомнил пароль! <a href="/login">Войти</a>
+        </div>
+    </div>
+{% endblock %}

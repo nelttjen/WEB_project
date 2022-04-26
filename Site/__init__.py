@@ -12,7 +12,7 @@ from Site.settings import *
 app = Flask(__name__)
 config = Config(app)
 config.set('SQLALCHEMY_DATABASE_URI',
-           sharaga_db)
+           main_db)
 config.set('MAX_CONTENT_LENGTH', MAX_FILE_SIZE)
 login_manager = LoginManager(app)
 db = SQLAlchemy(app)
@@ -20,4 +20,4 @@ migrate = Migrate(app, db)
 api = Api(app)
 generate_API = js2py.eval_js(open('data/generateAPI.js').read())
 
-from Site import models, auth, routes
+from Site import models, auth, routes, admin

@@ -131,3 +131,4 @@ dmypy.json
 line_counter.py
 
 /Site/static/img/profile_images/*.png
+/Site/static/js/test.js

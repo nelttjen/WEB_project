@@ -25,7 +25,7 @@
             <div class="avatar">
                 <img src="{{profile_image|safe}}" alt="" class="profile-image">
                 <div class="mb-3">
-                    <label for="formFile" class="form-label">Загрузить новую аватарку</label>
+                    <label for="formFile" class="form-label">Загрузить новую аватарку (Формат файла: png, jpg, jpeg; Максимум: 16Мб)</label>
                     <input class="form-control" type="file" id="formFile" name="file">
                 </div>
             </div>
@@ -123,6 +123,9 @@
         <div class="buttons">
             <a href="/logout" class="submit-button a-button">Выйти из аккаунта</a>
             <a href="/apikey" class="submit-button a-button">API ключ</a>
+            {% if user.admin_status > 0%}
+            <a href="/admin" class="submit-button a-button" style="border: 1px solid rgb(152, 83, 83);">Админ панель</a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

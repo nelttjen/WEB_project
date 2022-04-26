@@ -14,7 +14,7 @@
             {{info|safe}}
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+                <ul class="flashes {{info_class}}" style="list-style: none; padding-left: 10px; display: block;">
                 {% for message in messages %}
                     <li>{{ message }}</li>
                 {% endfor %}

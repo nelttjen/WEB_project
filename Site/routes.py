@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from Site import app, db, generate_API
-from Site.models import User, Apikey
+from Site.models import User, Apikey, BalanceRequest
 from Site.settings import *
 
 
@@ -28,7 +28,7 @@ def index():
         return redirect(url_for('register', ref=ref))
     return render_template("index.html",
                            css=url_for('static', filename='css/index.css'),
-                           nickname=get_user_nick())
+                           user=User.query.get(current_user.get_id()))
 
 
 @app.route('/test')
@@ -172,3 +172,31 @@ def delete_apikey():
     Apikey.query.filter_by(requestor_id=user.id).delete()
     db.session.commit()
     return redirect('apikey')
+
+
+@app.route('/topup', methods=['GET', 'POST'])
+def topup():
+    if not current_user.get_id():
+        return redirect(url_for('login'))
+    usr = User.query.get(current_user.get_id())
+    _class = 'info'
+    if request.method == 'POST':
+        balance = request.form.get('money')
+        if not balance:
+            flash('Введите сумму пополнения')
+        else:
+            try:
+                balance = round(float(balance), 2)
+                _new = BalanceRequest(
+                    login_for=usr.login,
+                    sum=balance,
+                    date=datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S'),
+                )
+                db.session.add(_new)
+                db.session.commit()
+                _class = 'info-green'
+                flash('Заявка создана! Ждите решения администратора.')
+            except ValueError:
+                flash('Что-то пошло не так. Попробуйте ещё раз.')
+    return render_template('topup.html', css=url_for('static', filename='css/topup.css'),
+                           user=usr, info_class=_class)

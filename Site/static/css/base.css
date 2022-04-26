@@ -99,3 +99,14 @@ body {
     text-decoration: none;
     text-align: center;
 }
+
+.info, .info-green {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.info {
+    color: #e00000;
+}
+.info-green {
+    color: green;
+}
