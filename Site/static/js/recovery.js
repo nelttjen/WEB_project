@@ -1,45 +1,22 @@
-function validate() {
-    var login = $("#login");
-    var pass1 = $("#pass1");
-    var pass2 = $("#pass2");
-    var day = $("#select-day");
-    var month = $("#select-month");
-    var year = $("#select-year");
-    var accept = $("#rule-accepted");
-    if (!login.val()) {
-        alert("Введите логин");
-        return false;
-    } else if (login.val() === pass1.val()){
-        alert("Пароль не может совпадать с логином");
-        return false;
-    } else if (!testLogin(login.val())) {
-        return false;
-    } else if (!checkPassword(pass1, pass2)) {
-        return false;
-    } else if (day.val() === "0" || month.val() === "0" || year.val() === "0") {
-        alert("Выберите дату рождения");
-        return false;
-    } else if (!accept.prop('checked')) {
-        alert("Вы должны быть согласны с правилами сервиса");
-        return false;
+function recovery_validate(){
+    pass1 = document.getElementById('password1');
+    pass2 = document.getElementById('password2');
+    if (pass1 && pass2) {
+        return checkPassword(pass1, pass2);
     }
-    return true;
-}
-
-function testLogin(login) {
-    var r = /[^A-Z-a-z-0-9_]/g;
-    if (r.test(login)) {
-        alert("В логине введены недопустимые символы. Разрешены латинские буквы, цифры и символ подчеркивания");
-        return false;
-    }
-    return true;
+    return false;
 }
 
 function checkPassword(passw1, passw2) {
     var min_c = 8;
     var max_c = 30;
-    var pass1 = passw1.val();
-    var pass2 = passw2.val();
+    try {
+        var pass1 = passw1.value;
+        var pass2 = passw2.value;
+    } catch (error) {
+        alert('Что-то пошло не так. Перезагрузите страницу.');
+        return false;
+    }
     if (!pass1 || !pass2) {
         alert("Введите и повторите пароль");
         return false;
@@ -55,7 +32,7 @@ function checkPassword(passw1, passw2) {
     return true;
 
     function testPassword(pass) {
-        var passw = pass.val();
+        var passw = pass.value;
         var r = /[^A-Z-a-z-0-9*_~$#&-]/g;
         if(r.test(passw)){
             alert("В пароле введены недопустимые символы. Разрешены латинские буквы и цифры и (*_~$#&-)");

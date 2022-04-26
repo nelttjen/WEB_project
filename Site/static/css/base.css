@@ -73,3 +73,40 @@ body {
 .container {
     position: relative;
 }
+
+.submit-button {
+    margin-top: 25px;
+    background-color: white;
+    font-weight: 600;
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid lightgray;
+    border-radius: 0.25rem;
+    transition: 0.25s;
+}
+
+.submit-button:hover {
+    color: white;
+    background-color: #0d6dfd;
+    border: 1px solid #0d6efd;
+    border-radius: 0.65rem;
+
+}
+
+.a-button {
+    color: black;
+    text-decoration: none;
+    text-align: center;
+}
+
+.info, .info-green {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.info {
+    color: #e00000;
+}
+.info-green {
+    color: green;
+}

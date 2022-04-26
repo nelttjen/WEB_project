@@ -1,14 +1,15 @@
+import datetime
 import os.path
 
 from flask import render_template, url_for, request, redirect, flash
-from flask_login import login_required, current_user
+from flask_login import current_user
 from datetime import date
 
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from Site import app, db
-from Site.models import User
+from Site import app, db, generate_API
+from Site.models import User, Apikey, BalanceRequest
 from Site.settings import *
 
 
@@ -27,7 +28,7 @@ def index():
         return redirect(url_for('register', ref=ref))
     return render_template("index.html",
                            css=url_for('static', filename='css/index.css'),
-                           nickname=get_user_nick())
+                           user=User.query.get(current_user.get_id()))
 
 
 @app.route('/test')
@@ -70,7 +71,10 @@ def profile():
             if file_res not in available:
                 flash('Формат файла не поддерживается')
             else:
-                new_file = f'Site/static/img/profile_images/{secure_filename(f"{current_user.get_id()}.png")}'
+                img_location = 'Site/static/img/profile_images'
+                if not os.path.isdir(img_location):
+                    os.mkdir(img_location)
+                new_file = f'{img_location}/{secure_filename(f"{current_user.get_id()}.png")}'
                 file.save(new_file)
 
         if request.form.get('show-select'):
@@ -127,3 +131,72 @@ def profile():
                                ref_id=cur_user.id,
                                current_orders=current_orders,
                                completed_orders=orders_id)
+
+
+@app.route('/apikey', methods=['GET', 'POST'])
+def apikey():
+    if not current_user.get_id():
+        return redirect('login')
+    user = User.query.get(current_user.get_id())
+    user_api = Apikey.query.filter_by(requestor_id=user.id).first()
+    if request.method == 'POST':
+        if user_api:
+            flash('У вас уже есть API ключ')
+        else:
+            c_date = datetime.datetime.now().strftime('%d.%m.%Y')
+            e_date = datetime.datetime.now() + datetime.timedelta(days=365)
+            e_date = e_date.strftime('%d.%m.%Y')
+            new_apikey = generate_API()
+            req_id = user.id
+            access_level = user.admin_status
+            info = f'''User id {user.id} with access level {
+            ["User", "Moderator", "Administrator"][user.admin_status]}'''
+            _apikey = Apikey(apikey=new_apikey,
+                             requestor_id=req_id,
+                             info=info,
+                             access_level=access_level,
+                             creation_date=c_date,
+                             valid_end=e_date)
+            db.session.add(_apikey)
+            db.session.commit()
+            return redirect('apikey')
+    return render_template('apikey.html', css=url_for('static', filename='css/apikey.css'),
+                           user=user, apikey=user_api)
+
+
+@app.route('/delete_apikey')
+def delete_apikey():
+    if not current_user.get_id():
+        return redirect('login')
+    user = User.query.get(current_user.get_id())
+    Apikey.query.filter_by(requestor_id=user.id).delete()
+    db.session.commit()
+    return redirect('apikey')
+
+
+@app.route('/topup', methods=['GET', 'POST'])
+def topup():
+    if not current_user.get_id():
+        return redirect(url_for('login'))
+    usr = User.query.get(current_user.get_id())
+    _class = 'info'
+    if request.method == 'POST':
+        balance = request.form.get('money')
+        if not balance:
+            flash('Введите сумму пополнения')
+        else:
+            try:
+                balance = round(float(balance), 2)
+                _new = BalanceRequest(
+                    login_for=usr.login,
+                    sum=balance,
+                    date=datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S'),
+                )
+                db.session.add(_new)
+                db.session.commit()
+                _class = 'info-green'
+                flash('Заявка создана! Ждите решения администратора.')
+            except ValueError:
+                flash('Что-то пошло не так. Попробуйте ещё раз.')
+    return render_template('topup.html', css=url_for('static', filename='css/topup.css'),
+                           user=usr, info_class=_class)

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block head %}
+    {{super()}}
+    <link rel="stylesheet" href="{{css|safe}}">
+{% endblock %}
+{% block container %}
+    <div class="profile-info">
+        <h2 class="nickname" style="text-align: center;">API ключ пользователя {{user.login}}</h1>
+        <div class="info mb-4">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+        {% if apikey %}
+            <label for="apikey" class="form-label">Ваш персональный API-ключ</label>
+            <input type="text" class="form-control" id="apikey" value={{apikey.apikey}} readonly>
+            <p class="mt-4">Дата окончания: {{apikey.valid_end}}</p>
+            <a href="/delete_apikey" class="submit-button a-button">Удалить API ключ</a>
+        {% else %}
+            <form action="" method="post">
+                <button type="submit" class="submit-button">Получить ключ</button>
+            </form>
+        {% endif %}
+        <a href="/profile" class="submit-button a-button">Вернуться в профиль</a>
+    </div>
+{% endblock %}

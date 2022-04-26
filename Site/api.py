@@ -9,7 +9,7 @@ from Site.models import User, Apikey
 def abort_if_user_not_found(user_id):
     user = User.query.get(user_id)
     if not user:
-        abort(404, message=f'User with id={user_id} not found')
+        abort(404, message=f'User with id={user_id} not found', response=None, status='404')
 
 
 def get_and_check_apikey(apikey):
@@ -20,9 +20,9 @@ def get_and_check_apikey(apikey):
         valid = True
         if apikey.valid_end != 'Unlimited':
             d, m, y = map(int, apikey.valid_end.split('.'))
-            date1 = datetime.datetime.now()
+            date1 = datetime.date.today()
             date2 = datetime.date(y, m, d)
-            if date2 > date1:
+            if date2 < date1:
                 valid = False
                 message = f'Your Apikey expired {date2.strftime("%d.%m.%Y")}. Please, update your Apikey!'
     return apikey, valid, message
@@ -49,17 +49,19 @@ class UsersResource(Resource):
         args = parser.parse_args()
         users = User.query.all()
         allowed = ['id', 'login', 'parent', 'current_orders']
+        access_level = 0
         message = 'OK'
         if args.apikey:
             apikey, valid, msg = get_and_check_apikey(args.apikey)
             if valid:
                 allowed = get_allowed_fields(apikey.access_level)
+                access_level = apikey.access_level
             elif not apikey:
                 message = 'Apikey is invalid!'
             else:
                 message = msg
         response = {
-            'response': [user.to_dict(only=allowed) for user in users],
+            'response': [user.to_dict(only=allowed) for user in users if user.admin_status <= access_level],
             'message': message,
             'status': '200'
         }
@@ -68,7 +70,6 @@ class UsersResource(Resource):
 
 class UserResource(Resource):
     def get(self, user_id):
-        abort_if_user_not_found(user_id)
         parser = reqparse.RequestParser()
         parser.add_argument('apikey', required=False)
         args = parser.parse_args()
@@ -85,24 +86,26 @@ class UserResource(Resource):
         else:
             message = 'Apikey is required!'
         user = User.query.get(user_id)
-        if not user:
-            response = {
-                'response': None,
-                'message': 'User not found!',
-                'status': '404'
-            }
-        elif not valid:
+        if not valid:
             response = {
                 'response': None,
                 'message': message,
-                'status': '404'
+                'status': '401'
             }
         else:
-            response = {
-                'response': user.to_dict(only=allowed),
-                'message': f'User with id {user_id}, access level: '
-                           f'''{["User", "Moderator", "Administrator"].index(apikey.access_level) 
-                           if apikey.access_level != 99 else "Superuser"}''',
-                'status': '200'
-            }
+            abort_if_user_not_found(user_id)
+            if user.admin_status <= apikey.access_level:
+                response = {
+                    'response': user.to_dict(only=allowed),
+                    'message': f'User with id {user_id}, access level: '
+                               f'''{["User", "Moderator", "Administrator"][apikey.access_level] 
+                               if apikey.access_level != 99 else "Superuser"}''',
+                    'status': '200'
+                }
+            else:
+                response = {
+                    'response': None,
+                    'message': 'Your access level is too low to show this user',
+                    'status': '401'
+                }
         return jsonify(response)

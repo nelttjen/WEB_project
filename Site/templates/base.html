@@ -24,7 +24,7 @@
             <li><a href="/">lorem</a></li>
         </ul>
         <div class="login_top">
-            {% if not nickname %}
+            {% if not user.login %}
             <a href="/login"><button class="btn btn-outline-success">Авторизация</button></a>
             {% else %}
             <a href="/profile"><button class="btn btn-outline-success">Личный кабинет</button></a>

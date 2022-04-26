@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{css|safe}}">
+{% endblock %}
+{% block container %}
+    <div class="topup">
+        <h1>Пополнение баланса</h1>
+        <h3>Ваш баланс: {{user.balance}} руб</h3>
+        <div class="info-div mb-4">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class="flashes {{info_class}}" style="list-style: none; padding-left: 10px; display: block;">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+        <form action="" method="post" enctype="multipart/form-data">
+            <div class="balance">
+                <label for="topup-input" class="form-label">Сумма пополнения</label>
+                <input type="number" step="0.01" class="form-control num-inp" id="topup-input" name="money" placeholder="Сумма пополнения">
+            </div>
+            <p class="mt-3">
+                Так как это просто проект, пополнения деньгами тут нет.
+                Ваша заявка будет создана и обработана администраторами сайта.
+            </p>
+            <button type="submit" class="submit-button">Подтвердить</button>
+        </form>
+    </div>
+{% endblock %}
