@@ -32,17 +32,14 @@ def index():
 
 
 @app.route('/test')
+@login_required
 def test():
-    if not current_user.get_id():
-        return redirect('login')
-
     return current_user.get_id()
 
 
 @app.route('/profile', methods=["GET", 'POST'])
+@login_required
 def profile():
-    if not current_user.get_id():
-        return redirect('login')
     profile_id = request.args.get('user_id')
     superuser = None
     if profile_id:
@@ -134,9 +131,8 @@ def profile():
 
 
 @app.route('/apikey', methods=['GET', 'POST'])
+@login_required
 def apikey():
-    if not current_user.get_id():
-        return redirect('login')
     user = User.query.get(current_user.get_id())
     user_api = Apikey.query.filter_by(requestor_id=user.id).first()
     if request.method == 'POST':
@@ -165,9 +161,8 @@ def apikey():
 
 
 @app.route('/delete_apikey')
+@login_required
 def delete_apikey():
-    if not current_user.get_id():
-        return redirect('login')
     user = User.query.get(current_user.get_id())
     Apikey.query.filter_by(requestor_id=user.id).delete()
     db.session.commit()
@@ -175,9 +170,8 @@ def delete_apikey():
 
 
 @app.route('/topup', methods=['GET', 'POST'])
+@login_required
 def topup():
-    if not current_user.get_id():
-        return redirect(url_for('login'))
     usr = User.query.get(current_user.get_id())
     _class = 'info'
     if request.method == 'POST':

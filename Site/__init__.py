@@ -16,6 +16,7 @@ config.set('SQLALCHEMY_DATABASE_URI',
 config.set('MAX_CONTENT_LENGTH', MAX_FILE_SIZE)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+login_manager.login_message = 'Вы должны быть авторизованы для просмотра этой страницы.'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 api = Api(app)

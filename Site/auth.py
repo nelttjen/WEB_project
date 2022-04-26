@@ -3,7 +3,7 @@ import random
 
 import sqlalchemy.exc
 from flask import request, render_template, url_for, flash, redirect
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Site import app, login_manager, db
@@ -50,7 +50,7 @@ def login():
     _login = ""
     if current_user.get_id():
         return redirect(url_for('index'))
-    _class = 'info' if not request.args.get('recovery') else 'info-green'
+    _class = 'info' if not request.args.get('recovery') and not request.args.get('logout') else 'info-green'
     if request.method == 'POST':
         user_login = request.form.get('login')
         password = request.form.get('pass')
@@ -112,6 +112,8 @@ def register():
 def logout():
     if current_user.get_id():
         logout_user()
+        flash('Вы вышли из аккаунта')
+        return redirect(url_for('login', logout=1))
     return redirect(url_for("login"))
 
 
@@ -127,6 +129,7 @@ def recovery():
             _login = args_login
             db_code = ConfirmCode.query.filter_by(login_for=_login).first()
             if not db_code:
+                flash('Код устарел, получите новый код')
                 return redirect(url_for('recovery'))
             else:
                 if delete_if_not_valid(db_code, _login):
