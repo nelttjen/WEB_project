@@ -4,6 +4,7 @@ from werkzeug.utils import redirect
 
 from Site import app, db
 from Site.models import User
+from Site.routes import create_apikey
 
 
 def redirect_if_not_admin():

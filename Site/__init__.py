@@ -1,3 +1,4 @@
+import datetime
 import js2py
 
 from flask import Flask
@@ -21,5 +22,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 api = Api(app)
 generate_API = js2py.eval_js(open('data/generateAPI.js').read())
+launch = datetime.datetime.now()
 
 from Site import models, auth, routes, admin

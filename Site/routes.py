@@ -21,6 +21,24 @@ def get_user_nick():
     return nick
 
 
+def create_apikey(user):
+    c_date = datetime.datetime.now().strftime('%d.%m.%Y')
+    e_date = datetime.datetime.now() + datetime.timedelta(days=APIKEY_DAYS_VALID)
+    e_date = e_date.strftime('%d.%m.%Y')
+    new_apikey = generate_API()
+    req_id = user.id
+    access_level = user.admin_status
+    info = f'''User id {user.id} with access level {
+    ["User", "Moderator", "Administrator"][user.admin_status]}'''
+    _apikey = Apikey(apikey=new_apikey,
+                     requestor_id=req_id,
+                     info=info,
+                     access_level=access_level,
+                     creation_date=c_date,
+                     valid_end=e_date)
+    db.session.add(_apikey)
+    db.session.commit()
+
 @app.route('/')
 def index():
     ref = request.args.get("ref")
@@ -98,7 +116,7 @@ def profile():
                 flash('Введенный пароль не совпадает с текущим')
         db.session.commit()
 
-        return redirect('profile')
+        return redirect(url_for('profile'))
     else:
         if superuser and superuser.admin_status == 2:
             try:
@@ -139,23 +157,8 @@ def apikey():
         if user_api:
             flash('У вас уже есть API ключ')
         else:
-            c_date = datetime.datetime.now().strftime('%d.%m.%Y')
-            e_date = datetime.datetime.now() + datetime.timedelta(days=365)
-            e_date = e_date.strftime('%d.%m.%Y')
-            new_apikey = generate_API()
-            req_id = user.id
-            access_level = user.admin_status
-            info = f'''User id {user.id} with access level {
-            ["User", "Moderator", "Administrator"][user.admin_status]}'''
-            _apikey = Apikey(apikey=new_apikey,
-                             requestor_id=req_id,
-                             info=info,
-                             access_level=access_level,
-                             creation_date=c_date,
-                             valid_end=e_date)
-            db.session.add(_apikey)
-            db.session.commit()
-            return redirect('apikey')
+            create_apikey(user)
+            return redirect(url_for('apikey'))
     return render_template('apikey.html', css=url_for('static', filename='css/apikey.css'),
                            user=user, apikey=user_api)
 
@@ -166,7 +169,7 @@ def delete_apikey():
     user = User.query.get(current_user.get_id())
     Apikey.query.filter_by(requestor_id=user.id).delete()
     db.session.commit()
-    return redirect('apikey')
+    return redirect(url_for('apikey'))
 
 
 @app.route('/topup', methods=['GET', 'POST'])
