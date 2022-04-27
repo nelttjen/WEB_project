@@ -49,8 +49,8 @@ def generate_code(login_for):
 def login():
     _login = ""
     if current_user.get_id():
-        return redirect(url_for('index'))
-    _class = 'info' if not request.args.get('recovery') else 'info-green'
+        return redirect(url_for('profile'))
+    _class = 'info' if not any([request.args.get(i) for i in ['recovery', 'logout', 'register']]) else 'info-green'
     if request.method == 'POST':
         user_login = request.form.get('login')
         password = request.form.get('pass')
@@ -70,7 +70,7 @@ def login():
 @app.route('/register', methods=['post', 'get'])
 def register():
     if current_user.get_id():
-        return redirect(url_for('index'))
+        return redirect(url_for('profile'))
 
     ref = request.args.get('ref')
     fref = f'''value={ref} readonly''' if ref else ""
@@ -100,7 +100,7 @@ def register():
                 db.session.add(new_user)
                 db.session.commit()
                 flash('Регистрация успешна')
-                return redirect(url_for("login"))
+                return redirect(url_for("login", register=1))
             except sqlalchemy.exc.IntegrityError:
                 flash("Логин уже занят!")
 
@@ -112,13 +112,15 @@ def register():
 def logout():
     if current_user.get_id():
         logout_user()
+        flash('Вы вышли из аккаунта')
+        return redirect(url_for('login', logout=1))
     return redirect(url_for("login"))
 
 
 @app.route('/recovery', methods=["GET", 'POST'])
 def recovery():
     if current_user.get_id():
-        return redirect('index')
+        return redirect(url_for('profile'))
     args_login = request.args.get('login')
     _login, _code = [None] * 2
     if args_login:
@@ -127,6 +129,7 @@ def recovery():
             _login = args_login
             db_code = ConfirmCode.query.filter_by(login_for=_login).first()
             if not db_code:
+                flash('Код устарел, получите новый код')
                 return redirect(url_for('recovery'))
             else:
                 if delete_if_not_valid(db_code, _login):

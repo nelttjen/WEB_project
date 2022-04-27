@@ -1,4 +1,5 @@
 import argparse
+import os
 
 from werkzeug.security import generate_password_hash
 
@@ -39,4 +40,5 @@ if __name__ == '__main__':
         db.session.commit()
     if args.get_superapi:
         print([i.apikey for i in Apikey.query.filter_by(access_level=99).all()])
-    app.run(port=8080)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)

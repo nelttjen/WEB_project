@@ -2,7 +2,7 @@ import datetime
 import os.path
 
 from flask import render_template, url_for, request, redirect, flash
-from flask_login import current_user
+from flask_login import current_user, login_required
 from datetime import date
 
 from werkzeug.utils import secure_filename
@@ -21,6 +21,24 @@ def get_user_nick():
     return nick
 
 
+def create_apikey(user):
+    c_date = datetime.datetime.now().strftime('%d.%m.%Y')
+    e_date = datetime.datetime.now() + datetime.timedelta(days=APIKEY_DAYS_VALID)
+    e_date = e_date.strftime('%d.%m.%Y')
+    new_apikey = generate_API()
+    req_id = user.id
+    access_level = user.admin_status
+    info = f'''User id {user.id} with access level {
+    ["User", "Moderator", "Administrator"][user.admin_status]}'''
+    _apikey = Apikey(apikey=new_apikey,
+                     requestor_id=req_id,
+                     info=info,
+                     access_level=access_level,
+                     creation_date=c_date,
+                     valid_end=e_date)
+    db.session.add(_apikey)
+    db.session.commit()
+
 @app.route('/')
 def index():
     ref = request.args.get("ref")
@@ -32,17 +50,14 @@ def index():
 
 
 @app.route('/test')
+@login_required
 def test():
-    if not current_user.get_id():
-        return redirect('login')
-
     return current_user.get_id()
 
 
 @app.route('/profile', methods=["GET", 'POST'])
+@login_required
 def profile():
-    if not current_user.get_id():
-        return redirect('login')
     profile_id = request.args.get('user_id')
     superuser = None
     if profile_id:
@@ -101,7 +116,7 @@ def profile():
                 flash('Введенный пароль не совпадает с текущим')
         db.session.commit()
 
-        return redirect('profile')
+        return redirect(url_for('profile'))
     else:
         if superuser and superuser.admin_status == 2:
             try:
@@ -134,50 +149,32 @@ def profile():
 
 
 @app.route('/apikey', methods=['GET', 'POST'])
+@login_required
 def apikey():
-    if not current_user.get_id():
-        return redirect('login')
     user = User.query.get(current_user.get_id())
     user_api = Apikey.query.filter_by(requestor_id=user.id).first()
     if request.method == 'POST':
         if user_api:
             flash('У вас уже есть API ключ')
         else:
-            c_date = datetime.datetime.now().strftime('%d.%m.%Y')
-            e_date = datetime.datetime.now() + datetime.timedelta(days=365)
-            e_date = e_date.strftime('%d.%m.%Y')
-            new_apikey = generate_API()
-            req_id = user.id
-            access_level = user.admin_status
-            info = f'''User id {user.id} with access level {
-            ["User", "Moderator", "Administrator"][user.admin_status]}'''
-            _apikey = Apikey(apikey=new_apikey,
-                             requestor_id=req_id,
-                             info=info,
-                             access_level=access_level,
-                             creation_date=c_date,
-                             valid_end=e_date)
-            db.session.add(_apikey)
-            db.session.commit()
-            return redirect('apikey')
+            create_apikey(user)
+            return redirect(url_for('apikey'))
     return render_template('apikey.html', css=url_for('static', filename='css/apikey.css'),
                            user=user, apikey=user_api)
 
 
 @app.route('/delete_apikey')
+@login_required
 def delete_apikey():
-    if not current_user.get_id():
-        return redirect('login')
     user = User.query.get(current_user.get_id())
     Apikey.query.filter_by(requestor_id=user.id).delete()
     db.session.commit()
-    return redirect('apikey')
+    return redirect(url_for('apikey'))
 
 
 @app.route('/topup', methods=['GET', 'POST'])
+@login_required
 def topup():
-    if not current_user.get_id():
-        return redirect(url_for('login'))
     usr = User.query.get(current_user.get_id())
     _class = 'info'
     if request.method == 'POST':
