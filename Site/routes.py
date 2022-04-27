@@ -8,7 +8,7 @@ from datetime import date
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from Site import app, db, generate_API
+from Site import app, db, generate_API, launch
 from Site.models import User, Apikey, BalanceRequest
 from Site.settings import *
 
@@ -53,7 +53,10 @@ def index():
 @app.route('/test')
 @login_required
 def test():
-    return current_user.get_id()
+    _delta = datetime.datetime.now() - launch
+    h, m, s = str(_delta).split(', ')[1].split(':') if str(_delta).count(',') > 0 else str(_delta).split(':')
+    stack = [int(_delta.days), int(h), int(m), int(float(s))]
+    return f'{int(_delta.days)} days, {int(h)} hours, {int(m)} minutes, {int(float(s))} seconds'
 
 
 @app.route('/profile', methods=["GET", 'POST'])

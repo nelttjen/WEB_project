@@ -4,5 +4,15 @@
     <link rel="stylesheet" href="{{css|safe}}">
 {% endblock %}
 {% block panel %}
-    
+    <div class="uptime mt-5">
+        <h1>Время работы сайта:</h1>
+        <h2>
+            {% with d, h, m, s = time %}
+            {{d}} {% if (2 <= d % 10 <= 4) and not (10 <= d % 100 <= 19) %}Дня{% elif (d % 10 == 1) and not (10 <= d % 100 <= 19)%}День{% else %}Дней{% endif %}, 
+            {{h}} {% if (2 <= h % 10 <= 4) and not (10 <= h % 100 <= 19) %}Часа{% elif (h % 10 == 1) and not (10 <= h % 100 <= 19)%}Час{% else %}Часов{% endif %}, 
+            {{m}} {% if (2 <= m % 10 <= 4) and not (10 <= m % 100 <= 19) %}Минуты{% elif (m % 10 == 1) and not (10 <= m % 100 <= 19)%}Минута{% else %}Минут{% endif %}, 
+            {{s}} {% if (2 <= s % 10 <= 4) and not (10 <= s % 100 <= 19) %}Секунды{% elif (s % 10 == 1) and not (10 <= s % 100 <= 19)%}Секунда{% else %}Секунд{% endif %}
+            {% endwith %}
+        </h2>
+    </div>
 {% endblock %}
