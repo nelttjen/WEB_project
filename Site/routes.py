@@ -39,6 +39,7 @@ def create_apikey(user):
     db.session.add(_apikey)
     db.session.commit()
 
+
 @app.route('/')
 def index():
     ref = request.args.get("ref")
@@ -133,7 +134,12 @@ def profile():
         refs = refs if refs else "У вас пока нет рефералов"
         current_orders = cur_user.current_orders if cur_user.current_orders else "У вас пока нет активных заказов"
         orders_id = cur_user.orders_id if cur_user.orders_id else "У вас пока нет завершенных заказов"
-        birth = date(cur_user.year, cur_user.month, cur_user.day).strftime("%d.%m.%Y")
+        try:
+            birth = date(cur_user.year, cur_user.month, cur_user.day).strftime("%d.%m.%Y")
+        except ValueError:
+            birth = date(cur_user.year, cur_user.month, cur_user.day - 1).strftime("%d.%m.%Y")
+            cur_user.day -= 1
+            db.session.commit()
         if not os.path.exists("Site/" + p_image):
             p_image = DEFAULT_PROFILE_IMAGE
         return render_template('profile.html',
