@@ -3,7 +3,7 @@ import os
 
 from werkzeug.security import generate_password_hash
 
-from Site import api, app, db, config, generate_API
+from Site import api, app, db, generate_API
 from Site.settings import *
 from Site.api import *
 from Site.models import Apikey
@@ -16,8 +16,6 @@ if __name__ == '__main__':
     parser.add_argument('--create-superapi', action='store_true')
     parser.add_argument('--get-superapi', action='store_true')
     args = parser.parse_args()
-    db.create_all()
-    config.set('SECRET_KEY', SECRET_KEY)
     if args.create_superuser:
         log = input('Логин: ')
         psw = input('Пароль: ')

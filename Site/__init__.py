@@ -23,5 +23,7 @@ migrate = Migrate(app, db)
 api = Api(app)
 generate_API = js2py.eval_js(open('data/generateAPI.js').read())
 launch = datetime.datetime.now()
+config.set('SECRET_KEY', SECRET_KEY)
+db.create_all()
 
 from Site import models, auth, routes, admin
