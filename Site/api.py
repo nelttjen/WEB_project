@@ -134,6 +134,9 @@ class UserResource(Resource):
 
 class BalanceAccept(Resource):
     def get(self):
+        return jsonify({'message': "method not allowed"})
+
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('apikey', required=True)
         parser.add_argument('request_id', required=True)

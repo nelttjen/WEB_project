@@ -16,6 +16,17 @@
             <a href="/admin/boosters" class="{% if current == 3 %}current{% else %} submit-button {% endif %} a-button">Бустеры</a>
             <a href="/admin/orders" class="{% if current == 4 %}current{% else %} submit-button {% endif %} a-button">Заказы</a>
         </div>
+        <p>
+            {% with messages = get_flashed_messages(True) %}
+                {% if messages %}
+                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+                {% for message in messages %}
+                    <li {% if message[0] == 'fail'%}class="info"{% elif message[0] == 'succ'%}class="info-green"{% endif %}>{{ message[1] }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </p>
         {% block panel %}
         {% endblock %}
     </div>

@@ -1,12 +1,13 @@
 import argparse
 import os
+import datetime
 
 from werkzeug.security import generate_password_hash
 
 from Site import API, app, db, generate_API
 from Site.settings import *
-from Site.api import *
-from Site.models import Apikey
+from Site.api import UserResource, UsersResource, BalanceAccept
+from Site.models import Apikey, User
 
 if __name__ == '__main__':
     db.create_all()

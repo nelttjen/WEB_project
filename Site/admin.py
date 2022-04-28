@@ -1,12 +1,21 @@
 import datetime
+import os
+import requests
 
-from flask import url_for, render_template
+from flask import url_for, render_template, request, flash, get_flashed_messages
 from flask_login import current_user
 from werkzeug.utils import redirect
+from urllib.parse import urlparse, urljoin
 
 from Site import app, db, launch
 from Site.models import *
 from Site.api import create_apikey, get_and_check_apikey
+
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 
 def redirect_if_not_admin():
@@ -52,7 +61,7 @@ def admin():
                            active_orders=len(active_orders), completed_orders=len(completed_orders),
                            total_boosters=len(total_boosters),
                            total_orders_sum=sum([i.price for i in total_orders_sum]),
-                           total_apikeys=len(total_apikeys),
+                           total_apikeys=len(total_apikeys), info_class='info'
                            )
 
 
@@ -64,7 +73,9 @@ def topups():
     check_apikey(usr)
     return render_template('admin_topups.html', css=url_for('static', filename='css/admin_topups.css'), user=usr,
                            current=1, requests=BalanceRequest.query.filter(BalanceRequest.accepted == 0).all(),
-                           apikey=Apikey.query.filter_by(requestor_id=usr.id).first().apikey)
+                           apikey=Apikey.query.filter_by(requestor_id=usr.id).first().apikey,
+
+                           info_class='info')
 
 
 @app.route('/admin/users')
@@ -74,7 +85,7 @@ def users():
     usr = User.query.get(current_user.get_id())
     check_apikey(usr)
     return render_template('admin_users.html', css=url_for('static', filename='css/admin_users.css'), user=usr,
-                           current=2)
+                           current=2, info_class='info')
 
 
 @app.route('/admin/boosters')
@@ -84,13 +95,49 @@ def boosters():
     usr = User.query.get(current_user.get_id())
     check_apikey(usr)
     return render_template('admin_boosters.html', css=url_for('static', filename='css/admin_boosters.css'), user=usr,
-                           current=3)
+                           current=3, info_class='info')
 
 
 @app.route('/admin/orders')
 def orders():
-    redirect_if_not_admin()
+    if redirect_if_not_admin():
+        return redirect(url_for('index'))
     usr = User.query.get(current_user.get_id())
     check_apikey(usr)
     return render_template('admin_orders.html', css=url_for('static', filename='css/admin_orders.css'), user=usr,
-                           current=4)
+                           current=4, info_class='info')
+
+
+@app.route('/admin/request')
+def _request():
+
+    def get_next(__next):
+        if __next and __next in ('orders', 'boosters', 'users', 'topups'):
+            return __next
+        return 'admin'
+
+    if redirect_if_not_admin():
+        return redirect(url_for('index'))
+    usr = User.query.get(current_user.get_id())
+    port = os.environ.get('PORT', 8080)
+    _next = request.args.get('next')
+    req_type = request.args.get('type')
+    apikey = request.args.get('apikey')
+    if not req_type or not apikey:
+        flash('Недостаточно параметров запроса', category='fail')
+        return redirect(url_for(get_next(_next)))
+    else:
+        if req_type == 'balance':
+            req_id = request.args.get('request_id')
+            if not req_id:
+                flash('Недостаточно параметров запроса', category='fail')
+                return redirect(url_for(get_next(_next)))
+            resp = requests.post(f'http://localhost:{port}/api/v1.0/accept/balance_request'
+                                 f'?apikey={apikey}'
+                                 f'&request_id={req_id}&acceptor_id={usr.id}').json()
+            if resp['message'] == 'OK':
+                msg = 'Заявка успешно принята' if req_id != 'all' else 'Все заявки успешно приняты'
+                flash(msg, 'succ')
+            else:
+                flash(resp['message'], 'fail')
+            return redirect(url_for(get_next(_next)))

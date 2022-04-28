@@ -5,9 +5,10 @@
 {% endblock %}
 {% block panel %}
     <div class="topup-requests mt-5">
-        <h1 class="mb-4">Заявки пополнений</h1>
+        <h1 class="mb-1">Заявки пополнений</h1>
         <div class="show-requests">
-            {% if requests%}
+            {% if requests %}
+                <a href="/admin/request?apikey={{apikey}}&request_id=all&type=balance&next=topups" class="submit-button a-button mb-4">Принять все</a>
                 {% for req in requests %}
                 <div class="request mt-1">
                     <p class="requestor">Пользователь: {{req.login_for}}</p>
@@ -17,10 +18,12 @@
                             {{d}}.{{m}}.{{y}} в {{H}}:{{M}}:{{S}}
                         {% endwith %}
                     </p>
-                    <a href="/api/v1.0/accept/balance_request?apikey={{apikey}}&request_id={{req.id}}&acceptor_id={{user.id}}" class="submit-button a-button">Подтвердить</a>
+                    <a href="/admin/request?apikey={{apikey}}&request_id={{req.id}}&type=balance&next=topups" class="submit-button a-button">Подтвердить</a>
                 </div>
                 {% endfor %}
-            {}
+            {% else %}
+                <h2 class="mt-4" style="text-align: center;">На данный момент нет новых заявок на пополнение</h2>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
