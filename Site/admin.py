@@ -49,7 +49,7 @@ def admin():
         return redirect(url_for('index'))
     usr = User.query.get(current_user.get_id())
     total_users = User.query.all()
-    total_topup = BalanceRequest.query.filter_by(accepted=False).all()
+    total_topup = BalanceRequest.query.filter_by(accepted=0).all()
     total_apikeys = Apikey.query.all()
     active_orders = ApexOrder.query.filter_by(status=2).all()
     completed_orders = ApexOrder.query.filter_by(status=3).all()
@@ -129,14 +129,17 @@ def _request():
     else:
         if req_type == 'balance':
             req_id = request.args.get('request_id')
-            if not req_id:
+            action = request.args.get('action')
+            if not req_id or not action:
                 flash('Недостаточно параметров запроса', category='fail')
                 return redirect(url_for(get_next(_next)))
             resp = requests.post(f'http://localhost:{port}/api/v1.0/accept/balance_request'
-                                 f'?apikey={apikey}'
+                                 f'?apikey={apikey}&action={action}'
                                  f'&request_id={req_id}&acceptor_id={usr.id}').json()
             if resp['message'] == 'OK':
-                msg = 'Заявка успешно принята' if req_id != 'all' else 'Все заявки успешно приняты'
+                msg = f'Заявка успешно {"принята" if resp["action"] == "accept" else "отклонена"}' \
+                    if req_id != 'all' else 'Все заявки успешно ' \
+                                            f'{"приняты" if resp["action"] == "accept" else "отклонены"}'
                 flash(msg, 'succ')
             else:
                 flash(resp['message'], 'fail')

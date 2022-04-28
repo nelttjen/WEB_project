@@ -23,17 +23,18 @@ def get_user_nick():
 
 
 @app.route('/')
+@app.route('/index')
 def index():
     ref = request.args.get("ref")
     if ref:
         return redirect(url_for('register', ref=ref))
     return render_template("index.html",
                            css=url_for('static', filename='css/index.css'),
-                           user=User.query.get(current_user.get_id()))
+                           user=User.query.get(current_user.get_id()),
+                           promo=None)
 
 
 @app.route('/test')
-@login_required
 def test():
     _delta = datetime.datetime.now() - launch
     h, m, s = str(_delta).split(', ')[1].split(':') if str(_delta).count(',') > 0 else str(_delta).split(':')
@@ -175,15 +176,18 @@ def topup():
         else:
             try:
                 balance = round(float(balance), 2)
-                _new = BalanceRequest(
-                    login_for=usr.login,
-                    sum=balance,
-                    date=datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S'),
-                )
-                db.session.add(_new)
-                db.session.commit()
-                _class = 'info-green'
-                flash('Заявка создана! Ждите решения администратора.')
+                if balance > 300000:
+                    flash('Максимальная сумма пополнения - 300000')
+                else:
+                    _new = BalanceRequest(
+                        login_for=usr.login,
+                        sum=balance,
+                        date=datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S'),
+                    )
+                    db.session.add(_new)
+                    db.session.commit()
+                    _class = 'info-green'
+                    flash('Заявка создана! Ждите решения администратора.')
             except ValueError:
                 flash('Что-то пошло не так. Попробуйте ещё раз.')
     return render_template('topup.html', css=url_for('static', filename='css/topup.css'),

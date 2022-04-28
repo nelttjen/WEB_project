@@ -1,0 +1,37 @@
+<style>
+    .calculator {
+        width: 500px;
+        padding: 30px;
+        outline: 5px solid orange;
+    }
+
+    .line-input {
+        width: 150px;
+        color: #8f1ee9;
+    }
+
+    .line-input::-webkit-inner-spin-button, .line-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+</style>
+
+<div class="calculator">
+    <div class="line">
+        <label for="from" class="form-label">Ваш рейтинг: 
+            <input type="number" class="form-control line-input" name="to-input" id="from-input" value="5000" min="0" max="20000" maxlength="5">
+        </label>
+        <div class="input_scrol">
+            <input type="range" name="from" id="from" class="form-range" min="0" max="20000" step="25" value="5000">
+        </div>
+    </div>
+    <div class="line">
+        <label for="from" class="form-label">Желаемый рейтинг: 
+            <input type="number" class="form-control line-input" name="to-input" id="to-input" value="10000" min="0" max="20000" maxlength="5">
+        </label>
+        <div class="input_scrol">
+            <input type="range" name="to" id="to" class="form-range" min="0" max="20000" step="25" value="10000">
+        </div>
+    </div>
+</div>

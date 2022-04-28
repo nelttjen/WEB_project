@@ -74,6 +74,11 @@ class BalanceRequest(db.Model, SerializerMixin):
     sum = db.Column(db.Float, nullable=False)
     date = db.Column(db.String, nullable=False)
 
+    # accepted
+    # -1 = rejected
+    # 0 = pending
+    # 1 - accepted
+
     accepted = db.Column(db.Float, nullable=False, default=False)
     acceptor_id = db.Column(db.Integer, default=-1)
 

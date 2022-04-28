@@ -8,7 +8,10 @@
         <h1 class="mb-1">Заявки пополнений</h1>
         <div class="show-requests">
             {% if requests %}
-                <a href="/admin/request?apikey={{apikey}}&request_id=all&type=balance&next=topups" class="submit-button a-button mb-4">Принять все</a>
+                <div class="action-all-refs mb-4">
+                    <a href="/admin/request?apikey={{apikey}}&request_id=all&type=balance&action=accept&next=topups" class="submit-button a-button">Принять все</a>
+                    <a href="/admin/request?apikey={{apikey}}&request_id=all&type=balance&action=reject&next=topups" class="reject-button a-button">Отклонить все</a>    
+                </div>
                 {% for req in requests %}
                 <div class="request mt-1">
                     <p class="requestor">Пользователь: {{req.login_for}}</p>
@@ -18,7 +21,11 @@
                             {{d}}.{{m}}.{{y}} в {{H}}:{{M}}:{{S}}
                         {% endwith %}
                     </p>
-                    <a href="/admin/request?apikey={{apikey}}&request_id={{req.id}}&type=balance&next=topups" class="submit-button a-button">Подтвердить</a>
+                    <div class="action-refs">
+                        <a href="/admin/request?apikey={{apikey}}&request_id={{req.id}}&type=balance&action=accept&next=topups" class="submit-button a-button">Подтвердить</a>
+                        <a href="/admin/request?apikey={{apikey}}&request_id={{req.id}}&type=balance&action=reject&next=topups" class="reject-button a-button">Отклонить</a>
+                        
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}
