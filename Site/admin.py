@@ -5,8 +5,8 @@ from flask_login import current_user
 from werkzeug.utils import redirect
 
 from Site import app, db, launch
-from Site.models import User
-from Site.routes import create_apikey
+from Site.models import *
+from Site.api import create_apikey, get_and_check_apikey
 
 
 def redirect_if_not_admin():
@@ -16,8 +16,20 @@ def redirect_if_not_admin():
     return False
 
 
-def get_time():
-    _delta = datetime.datetime.now() - launch
+def check_apikey(user):
+    apikey = Apikey.query.filter_by(requestor_id=user.id).first()
+    if not apikey:
+        create_apikey(user)
+    else:
+        _, valid, ___ = get_and_check_apikey(apikey.apikey)
+        if not valid:
+            db.session.delete(apikey)
+            create_apikey(user)
+            db.session.commit()
+
+
+def get_deltatime(_from, _to):
+    _delta = _to - _from
     h, m, s = str(_delta).split(', ')[1].split(':') if str(_delta).count(',') > 0 else str(_delta).split(':')
     return [int(_delta.days), int(h), int(m), int(float(s))]
 
@@ -27,8 +39,21 @@ def admin():
     if redirect_if_not_admin():
         return redirect(url_for('index'))
     usr = User.query.get(current_user.get_id())
+    total_users = User.query.all()
+    total_topup = BalanceRequest.query.filter_by(accepted=False).all()
+    total_apikeys = Apikey.query.all()
+    active_orders = ApexOrder.query.filter_by(status=2).all()
+    completed_orders = ApexOrder.query.filter_by(status=3).all()
+    total_boosters = Booster.query.all()
+    total_orders_sum = ApexOrder.query.filter(ApexOrder.status != 4 and ApexOrder.status != 5).all()
     return render_template('admin.html', css=url_for('static', filename='css/admin.css'), user=usr,
-                           time=get_time())
+                           time=get_deltatime(launch, datetime.datetime.now()),
+                           total_users=len(total_users), total_topup=len(total_topup),
+                           active_orders=len(active_orders), completed_orders=len(completed_orders),
+                           total_boosters=len(total_boosters),
+                           total_orders_sum=sum([i.price for i in total_orders_sum]),
+                           total_apikeys=len(total_apikeys),
+                           )
 
 
 @app.route('/admin/topups')
@@ -36,8 +61,10 @@ def topups():
     if redirect_if_not_admin():
         return redirect(url_for('index'))
     usr = User.query.get(current_user.get_id())
+    check_apikey(usr)
     return render_template('admin_topups.html', css=url_for('static', filename='css/admin_topups.css'), user=usr,
-                           current=1)
+                           current=1, requests=BalanceRequest.query.filter(BalanceRequest.accepted == 0).all(),
+                           apikey=Apikey.query.filter_by(requestor_id=usr.id).first().apikey)
 
 
 @app.route('/admin/users')
@@ -45,6 +72,7 @@ def users():
     if redirect_if_not_admin():
         return redirect(url_for('index'))
     usr = User.query.get(current_user.get_id())
+    check_apikey(usr)
     return render_template('admin_users.html', css=url_for('static', filename='css/admin_users.css'), user=usr,
                            current=2)
 
@@ -54,6 +82,7 @@ def boosters():
     if redirect_if_not_admin():
         return redirect(url_for('index'))
     usr = User.query.get(current_user.get_id())
+    check_apikey(usr)
     return render_template('admin_boosters.html', css=url_for('static', filename='css/admin_boosters.css'), user=usr,
                            current=3)
 
@@ -62,5 +91,6 @@ def boosters():
 def orders():
     redirect_if_not_admin()
     usr = User.query.get(current_user.get_id())
+    check_apikey(usr)
     return render_template('admin_orders.html', css=url_for('static', filename='css/admin_orders.css'), user=usr,
                            current=4)

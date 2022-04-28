@@ -4,5 +4,21 @@
     <link rel="stylesheet" href="{{css|safe}}">
 {% endblock %}
 {% block panel %}
-    topups
+    <div class="topup-requests mt-5">
+        <h1 class="mb-4">Заявки пополнений</h1>
+        <div class="show-requests">
+            {% for req in requests %}
+            <div class="request mt-1">
+                <p class="requestor">Пользователь: {{req.login_for}}</p>
+                <p class="request-sum">Сумма: {{req.sum}}</p>
+                <p class="request-date">Дата создания заявки: 
+                    {% with d, m, y, H, M, S = req.date.split('.') %}
+                        {{d}}.{{m}}.{{y}} в {{H}}:{{M}}:{{S}}
+                    {% endwith %}
+                </p>
+                <a href="/api/v1.0/accept/balance_request?apikey={{apikey}}&request_id={{req.id}}&acceptor_id={{user.id}}" class="submit-button a-button">Подтвердить</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

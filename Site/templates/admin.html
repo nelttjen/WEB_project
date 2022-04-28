@@ -4,6 +4,38 @@
     <link rel="stylesheet" href="{{css|safe}}">
 {% endblock %}
 {% block panel %}
+<div class="site-info mt-5">
+    <h1 class="mb-3">Краткая статистика сайта</h1>
+    <div class="users">
+        <h2>Всего пользователей:</h2>
+        <span>{{total_users}}</span>
+    </div>
+    <div class="topups">
+        <h2>Заявок пополнения:</h2>
+        <span>{{total_topup}}</span>
+    </div>
+    <div class="active_orders">
+        <h2>Активные заказы:</h2>
+        <span>{{active_orders}}</span>
+    </div>
+    <div class="completed_orders">
+        <h2>Завершенные заказы:</h2>
+        <span>{{completed_orders}}</span>
+    </div>
+    <div class="total_boosters">
+        <h2>Всего бустеров:</h2>
+        <span>{{total_boosters}}</span>
+    </div>
+    <div class="total_orders_sum">
+        <h2>Сумма заказов:</h2>
+        <span>{{total_orders_sum}} руб</span>
+    </div>
+    
+    <div class="total_apikeys">
+        <h2>Всего API ключей:</h2>
+        <span>{{total_apikeys}}</span>
+    </div>
+</div>
     <div class="uptime mt-5">
         <h1>Время работы сайта:</h1>
         <h2>
