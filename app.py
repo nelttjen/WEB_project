@@ -1,16 +1,19 @@
 import argparse
 import os
+import datetime
 
 from werkzeug.security import generate_password_hash
 
-from Site import api, app, db, generate_API
+from Site import API, app, db, generate_API
 from Site.settings import *
-from Site.api import *
-from Site.models import Apikey
+from Site.api import UserResource, UsersResource, BalanceAccept
+from Site.models import Apikey, User
 
 if __name__ == '__main__':
-    api.add_resource(UsersResource, APIROUTE + "/users")
-    api.add_resource(UserResource, APIROUTE + "/users/<int:user_id>")
+    db.create_all()
+    API.add_resource(UsersResource, APIROUTE + "/users")
+    API.add_resource(UserResource, APIROUTE + "/users/<int:user_id>")
+    API.add_resource(BalanceAccept, APIROUTE + '/accept/balance_request')
     parser = argparse.ArgumentParser()
     parser.add_argument('--create-superuser', action='store_true')
     parser.add_argument('--create-superapi', action='store_true')

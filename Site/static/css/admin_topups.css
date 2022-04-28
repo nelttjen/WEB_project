@@ -1,0 +1,21 @@
+.topup-requests h1{
+    text-align: center;
+}
+
+.request {
+    width: 100%;
+    border: 1px solid black;
+    position: relative;
+    padding: 20px 10px;
+}
+
+.request p {
+    margin: 0;
+}
+
+.request a {
+    position: absolute;
+    width: min-content;
+    right: 30px;
+    top: 10px;
+}

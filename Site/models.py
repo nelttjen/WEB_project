@@ -76,3 +76,36 @@ class BalanceRequest(db.Model, SerializerMixin):
 
     accepted = db.Column(db.Float, nullable=False, default=False)
     acceptor_id = db.Column(db.Integer, default=-1)
+
+
+class ApexOrder(db.Model, SerializerMixin):
+    __tablename__ = 'apex_orders'
+    id = db.Column(db.Integer, primary_key=True)
+
+    requestor_id = db.Column(db.Integer, nullable=False)
+    booster_id = db.Column(db.Integer, default=-1)
+
+    account = db.Column(db.String, nullable=False)
+
+    status = db.Column(db.Integer, default=0)
+    # statuses
+    # 0 - created
+    # 1 - accepted
+    # 2 - in_progress
+    # 3 - done
+    # 4 - canceled
+    # 5 - banned
+
+    from_points = db.Column(db.Integer, nullable=False)
+    to_points = db.Column(db.Integer, nullable=False)
+    addons = db.Column(db.String)
+    price = db.Column(db.Float, nullable=False)
+
+    date_created = db.Column(db.String, nullable=False)
+    date_accepted = db.Column(db.String)
+    date_in_progress = db.Column(db.String)
+    date_done = db.Column(db.String)
+    date_canceled = db.Column(db.String)
+    date_banned = db.Column(db.String)
+
+    info = db.Column(db.String)

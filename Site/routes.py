@@ -8,9 +8,10 @@ from datetime import date
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from Site import app, db, generate_API
+from Site import app, db, launch
 from Site.models import User, Apikey, BalanceRequest
 from Site.settings import *
+from Site.api import create_apikey
 
 
 def get_user_nick():
@@ -19,25 +20,6 @@ def get_user_nick():
     except AttributeError:
         nick = None
     return nick
-
-
-def create_apikey(user):
-    c_date = datetime.datetime.now().strftime('%d.%m.%Y')
-    e_date = datetime.datetime.now() + datetime.timedelta(days=APIKEY_DAYS_VALID)
-    e_date = e_date.strftime('%d.%m.%Y')
-    new_apikey = generate_API()
-    req_id = user.id
-    access_level = user.admin_status
-    info = f'''User id {user.id} with access level {
-    ["User", "Moderator", "Administrator"][user.admin_status]}'''
-    _apikey = Apikey(apikey=new_apikey,
-                     requestor_id=req_id,
-                     info=info,
-                     access_level=access_level,
-                     creation_date=c_date,
-                     valid_end=e_date)
-    db.session.add(_apikey)
-    db.session.commit()
 
 
 @app.route('/')
@@ -53,7 +35,10 @@ def index():
 @app.route('/test')
 @login_required
 def test():
-    return current_user.get_id()
+    _delta = datetime.datetime.now() - launch
+    h, m, s = str(_delta).split(', ')[1].split(':') if str(_delta).count(',') > 0 else str(_delta).split(':')
+    stack = [int(_delta.days), int(h), int(m), int(float(s))]
+    return f'{int(_delta.days)} days, {int(h)} hours, {int(m)} minutes, {int(float(s))} seconds'
 
 
 @app.route('/profile', methods=["GET", 'POST'])

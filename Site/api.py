@@ -3,7 +3,9 @@ import datetime
 from flask import jsonify
 from flask_restful import reqparse, abort, Resource
 
-from Site.models import User, Apikey
+from Site import generate_API, db
+from Site.settings import APIKEY_DAYS_VALID
+from Site.models import User, Apikey, BalanceRequest
 
 
 def abort_if_user_not_found(user_id):
@@ -26,6 +28,25 @@ def get_and_check_apikey(apikey):
                 valid = False
                 message = f'Your Apikey expired {date2.strftime("%d.%m.%Y")}. Please, update your Apikey!'
     return apikey, valid, message
+
+
+def create_apikey(user):
+    c_date = datetime.datetime.now().strftime('%d.%m.%Y')
+    e_date = datetime.datetime.now() + datetime.timedelta(days=APIKEY_DAYS_VALID)
+    e_date = e_date.strftime('%d.%m.%Y')
+    new_apikey = generate_API()
+    req_id = user.id
+    access_level = user.admin_status
+    info = f'''User id {user.id} with access level {
+    ["User", "Moderator", "Administrator"][user.admin_status]}'''
+    _apikey = Apikey(apikey=new_apikey,
+                     requestor_id=req_id,
+                     info=info,
+                     access_level=access_level,
+                     creation_date=c_date,
+                     valid_end=e_date)
+    db.session.add(_apikey)
+    db.session.commit()
 
 
 def get_allowed_fields(level):
@@ -111,3 +132,40 @@ class UserResource(Resource):
         return jsonify(response)
 
 
+class BalanceAccept(Resource):
+    def get(self):
+        return jsonify({'message': "method not allowed"})
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('apikey', required=True)
+        parser.add_argument('request_id', required=True)
+        parser.add_argument('acceptor_id', required=True)
+        args = parser.parse_args()
+        if not args.apikey or not args.request_id or not args.acceptor_id:
+            return abort(401, message='Not enough params')
+        apikey, valid, msg = get_and_check_apikey(args.apikey)
+
+        def accept_request(request, a_id):
+            request.accepted = 1
+            request.acceptor_id = a_id
+            _sum = request.sum
+            usr = User.query.filter_by(login=request.login_for).first()
+            if not usr:
+                return
+            else:
+                usr.balance += _sum
+                if usr.parent != -1:
+                    usr2 = User.query.get(usr.parent)
+                    usr2.balance += round(_sum / 10, 2)
+        if apikey.access_level >= 2:
+            if args.get('request_id') == 'all':
+                for req in BalanceRequest.query.filter(BalanceRequest.accepted == 0).all():
+                    accept_request(req, int(args.acceptor_id))
+            else:
+                _id = args.get('request_id')
+                accept_request(BalanceRequest.query.filter_by(id=_id).first(), int(args.acceptor_id))
+            db.session.commit()
+            return jsonify({'message': 'OK'})
+        else:
+            abort(401, message='Apikey access level is to low')
