@@ -9,11 +9,12 @@ from Site.settings import *
 from Site.api import UserResource, UsersResource, BalanceAccept
 from Site.models import Apikey, User
 
+API.add_resource(UsersResource, APIROUTE + "/users")
+API.add_resource(UserResource, APIROUTE + "/users/<int:user_id>")
+API.add_resource(BalanceAccept, APIROUTE + '/accept/balance_request')
+db.create_all()
+
 if __name__ == '__main__':
-    db.create_all()
-    API.add_resource(UsersResource, APIROUTE + "/users")
-    API.add_resource(UserResource, APIROUTE + "/users/<int:user_id>")
-    API.add_resource(BalanceAccept, APIROUTE + '/accept/balance_request')
     print('succ')
     parser = argparse.ArgumentParser()
     parser.add_argument('--create-superuser', action='store_true')
