@@ -14,9 +14,9 @@
         -webkit-appearance: none;
         margin: 0;
     }
-    
-</style>
 
+</style>
+<script async src="{{ url_for('static', filename='js/calc.js')}}"></script>
 <div class="calculator">
     <div class="line">
         <label for="from" class="form-label">Ваш рейтинг: 
@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="line">
-        <label for="from" class="form-label">Желаемый рейтинг: 
+        <label for="to" class="form-label">Желаемый рейтинг: 
             <input type="number" class="form-control line-input" name="to-input" id="to-input" value="10000" min="0" max="20000" maxlength="5">
         </label>
         <div class="input_scrol">
