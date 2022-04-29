@@ -192,3 +192,9 @@ def topup():
                 flash('Что-то пошло не так. Попробуйте ещё раз.')
     return render_template('topup.html', css=url_for('static', filename='css/topup.css'),
                            user=usr, info_class=_class)
+
+
+@app.route('/order')
+@login_required
+def order():
+    return

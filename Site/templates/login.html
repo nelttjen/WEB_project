@@ -2,8 +2,8 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="{{css|safe}}">
-    <script src="../static/js/login.js"></script>
-    <script src="../static/js/showPassword.js"></script>
+    <script src="{{url_for('static', filename='js/showPassword.js')}}"></script>
+    <script src="{{url_for('static', filename='js/login.js')}}"></script>
 {% endblock %}
 {% block container %}
     <div class="login">
