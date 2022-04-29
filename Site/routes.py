@@ -1,5 +1,7 @@
 import datetime
 import os.path
+import random
+import string
 
 from flask import render_template, url_for, request, redirect, flash
 from flask_login import current_user, login_required
@@ -28,10 +30,13 @@ def index():
     ref = request.args.get("ref")
     if ref:
         return redirect(url_for('register', ref=ref))
+    class Promo:
+        code = ''.join(random.sample(string.ascii_letters + string.digits, 7))
+        uses_left = 1
     return render_template("index.html",
                            css=url_for('static', filename='css/index.css'),
                            user=User.query.get(current_user.get_id()),
-                           promo=None)
+                           promo=Promo())
 
 
 @app.route('/test')
@@ -197,4 +202,9 @@ def topup():
 @app.route('/order')
 @login_required
 def order():
-    return
+    usr = User.query.get(current_user.get_id())
+    class Promo:
+        code = ''.join(random.sample(string.ascii_letters + string.digits, 7))
+        uses_left = 10
+    return render_template('order.html', css=url_for('static', filename='css/order.css'),
+                           user=usr, promo=Promo())

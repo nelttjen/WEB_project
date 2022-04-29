@@ -1,5 +1,29 @@
 {% extends "base.html" %}
 {% block head %}
+    {{super()}}
     <link rel="stylesheet" href="{{css|safe}}">
 {% endblock %}
 {% block container %}
+    {% if promo.uses_left > 0 %}
+    <div class="coupon">
+        <div class="coupon-content">
+            <div class="coupon-image">
+                {{promo.code}}
+            </div>
+            <div class="coupon-text">
+                <p>Сохраните <span>33%</span> по промокоду <span>{{promo.code}}</span>!</p>
+                <p>Осталось использований сегодня: <span>{{promo.uses_left}}</span></p>
+            </div>
+            <button class="coupon-button">Применить</button>
+        </div>
+    </div>
+    {% endif %}
+    <div class="order-main">
+        <div class="order-top-text">
+            Оформление заказа
+        </div>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% include "include/calc.html"%}
+        </form>
+    </div>
+{% endblock %}
