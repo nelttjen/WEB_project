@@ -1,8 +1,8 @@
 <style>
     .calculator {
-        width: 500px;
+        width: 750px;
         padding: 30px;
-        outline: 5px solid orange;
+        position: relative;
     }
 
     .line-input {
@@ -15,23 +15,56 @@
         margin: 0;
     }
 
+    .cost {
+        margin: 30px auto;
+        margin-bottom: 0;
+        font-size: 28px;
+        font-weight: 400;
+    }
+    
+    .line-top {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .line-top label {
+        font-size: 30px;
+        font-weight: 600;
+    }
+
+    .line-top input {
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .sum {
+        color: #8f1aeb;
+        font-weight: 600;
+    }
+
 </style>
 <script async src="{{ url_for('static', filename='js/calc.js')}}"></script>
+
 <div class="calculator">
-    <div class="line">
-        <label for="from" class="form-label">Ваш рейтинг: 
-            <input type="number" class="form-control line-input" name="to-input" id="from-input" value="5000" min="0" max="20000" maxlength="5">
-        </label>
-        <div class="input_scrol">
-            <input type="range" name="from" id="from" class="form-range" min="0" max="20000" step="25" value="5000">
+    <div class="line mb-3">
+        <div class="line-top mb-4">
+            <label for="from" class="form-label">Ваш рейтинг:</label>
+            <input type="number" class="form-control line-input track-value" name="from-input" id="from-input" value="5000" min="0" max="20000" maxlength="5">
+        </div>
+        <div class="input_scroll">
+            <input type="range" name="from" id="from" class="form-range track-value" min="0" max="20000" step="1" value="5000">
         </div>
     </div>
     <div class="line">
-        <label for="to" class="form-label">Желаемый рейтинг: 
-            <input type="number" class="form-control line-input" name="to-input" id="to-input" value="10000" min="0" max="20000" maxlength="5">
-        </label>
-        <div class="input_scrol">
-            <input type="range" name="to" id="to" class="form-range" min="0" max="20000" step="25" value="10000">
+        <div class="line-top mb-4">
+            <label for="to" class="form-label">Желаемый рейтинг:</label>
+            <input type="number" class="form-control line-input track-value" name="to-input" id="to-input" value="10000" min="0" max="20000" maxlength="5">
         </div>
+        <div class="input_scroll">
+            <input type="range" name="to" id="to" class="form-range track-value" min="0" max="20000" step="1" value="10000">
+        </div>
+    </div>
+    <div class="cost">
+        Стоимость: <span class="sum" id="sum"></span> рублей
     </div>
 </div>

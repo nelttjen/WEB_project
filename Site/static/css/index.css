@@ -4,11 +4,11 @@
     position: relative;
     width: 100%;
     max-width: 100%;
-    font-family: 'Roboto' sans-serif;
 }
 
 .hello-image {
-    position: relative;;
+    position: relative;
+    font-family: 'Red Hat Mono', monospace;
     width: 100%;
     height: 800px;
     background: url(../img/background_info.png) no-repeat top center;
@@ -20,7 +20,7 @@
     padding: 25px;
     width: fit-content;
     display: block;
-    top: 140px;
+    top: 80px;
     left: 10%;
 }
 
@@ -71,7 +71,7 @@
     color: #dbb3ff;
 }
 
-.hello-calculator a {
+.hello-calculator a, .calc-redirect a{
     height: 50px;
     line-height: 35px;
     font-size: large;
@@ -80,10 +80,9 @@
     color: #f0f0f0;
 }
 
-.hello-calculator a:hover {
+.hello-calculator a:hover, .calc-redirect a:hover {
     background-color: #9b25c8;
-    border: 1px solid #6114c9;
-   
+    border: 1px solid #6114c9; 
 }
 
 .why-us {
@@ -128,4 +127,20 @@
 
 .info-div h2 {
     color: #8010d8;
+}
+
+.calc-preview {
+    margin: auto;
+    text-align: center;
+    width: 750px;
+}
+
+.calc-text {
+    color: #2f074f;
+}
+
+.calc-redirect a{
+    margin-top: 0;
+    width: 300px;
+    margin: auto;
 }

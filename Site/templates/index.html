@@ -2,6 +2,7 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="{{css|safe}}">
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono&display=swap" rel="stylesheet">
 {% endblock %}
 {% block container %}
     <div class="hello">
@@ -29,7 +30,7 @@
                     </div>
                 </div>
                 <div class="hello-calculator">
-                    <a href="/calculator" class="submit-button a-button mt-5">Узнать стоимость</a>
+                    <a href="/order" class="submit-button a-button mt-5">Узнать стоимость</a>
                 </div>
             </div>
         </div>
@@ -69,5 +70,13 @@
             </div>
         </div>  
     </div>
-    {% include "include/calc.html" %}
+    <div class="calc-preview mb-5">
+        <div class="calc-text mb-5">
+            <h1>Узнайте стоимость заказа заранее</h1>
+        </div>
+        {% include "include/calc.html" %}
+        <div class="calc-redirect">
+            <a href="/order" class="submit-button a-button">Заказать буст</a>
+        </div>
+    </div>
 {% endblock %}
