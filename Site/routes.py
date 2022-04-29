@@ -79,6 +79,10 @@ def calculate_with_promo(price, promo, ret_promo=False):
     return price
 
 
+def get_curr_user():
+    return User.query.get(current_user.get_id())
+
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -89,7 +93,7 @@ def index():
     promo = Promo.query.filter_by(type=0).first()
     return render_template("index.html",
                            css=url_for('static', filename='css/index.css'),
-                           user=User.query.get(current_user.get_id()),
+                           user=get_curr_user(),
                            promo=promo)
 
 
@@ -106,9 +110,9 @@ def index():
 def profile():
     profile_id = request.args.get('user_id')
     superuser = None
+    cur_user = get_curr_user()
     if profile_id:
-        superuser = User.query.get(current_user.get_id())
-    cur_user = User.query.get(current_user.get_id())
+        superuser = cur_user
     if request.method == "POST":
         cur_email = current_user.email
         new_email = request.form.get("email")
@@ -191,6 +195,7 @@ def profile():
                                css=url_for('static', filename="css/profile.css"),
                                nickname=get_user_nick(),
                                user=cur_user,
+                               balance=round(cur_user.balance, 2),
                                profile_image=p_image,
                                birth=birth,
                                refs=refs,
@@ -202,7 +207,7 @@ def profile():
 @app.route('/apikey', methods=['GET', 'POST'])
 @login_required
 def apikey():
-    user = User.query.get(current_user.get_id())
+    user = get_curr_user()
     user_api = Apikey.query.filter_by(requestor_id=user.id).first()
     if request.method == 'POST':
         if user_api:
@@ -217,7 +222,7 @@ def apikey():
 @app.route('/delete_apikey')
 @login_required
 def delete_apikey():
-    user = User.query.get(current_user.get_id())
+    user = get_curr_user()
     Apikey.query.filter_by(requestor_id=user.id).delete()
     db.session.commit()
     return redirect(url_for('apikey'))
@@ -226,7 +231,7 @@ def delete_apikey():
 @app.route('/topup', methods=['GET', 'POST'])
 @login_required
 def topup():
-    usr = User.query.get(current_user.get_id())
+    usr = get_curr_user()
     _class = 'info'
     if request.method == 'POST':
         balance = request.form.get('money')
@@ -252,14 +257,16 @@ def topup():
             except ValueError:
                 flash('Что-то пошло не так. Попробуйте ещё раз.')
     return render_template('topup.html', css=url_for('static', filename='css/topup.css'),
-                           user=usr, info_class=_class)
+                           user=usr,
+                           balance=round(usr.balance, 2),
+                           info_class=_class)
 
 
 @app.route('/order', methods=['GET', 'POST'])
 @login_required
 def order():
     check_everyday_promo()
-    usr = User.query.get(current_user.get_id())
+    usr = get_curr_user()
     promo = Promo.query.filter_by(type=0).first()
     if request.method == "POST":
         try:
@@ -299,7 +306,7 @@ def order():
 @login_required
 def confirm():
     check_everyday_promo()
-    usr = User.query.get(current_user.get_id())
+    usr = get_curr_user()
     order_code = request.args.get('order_code')
     if not order_code:
         return redirect(url_for('order'))
@@ -323,9 +330,10 @@ def confirm():
 
 
 @app.route('/order/confirm/<string:order_id>')
+@login_required
 def confirm_by_id(order_id):
     action = request.args.get('action')
-    usr = User.query.get(current_user.get_id())
+    usr = get_curr_user()
     if not action or action not in ('accept', 'reject'):
         flash('Неизвестное действие')
         return redirect(url_for('order'))
@@ -346,7 +354,7 @@ def confirm_by_id(order_id):
                 _promo.uses_left -= 1
             db.session.commit()
             flash('Заказ создан! Ожидайте принятия одним из наших бустеров!', 'succ')
-            return redirect(url_for('profile'))
+            return redirect(url_for('myorders'))
         else:
             flash('Недостаточно средств на балансе. Пожалуйста, пополните баланс')
             return redirect(url_for('topup'))
@@ -358,5 +366,15 @@ def confirm_by_id(order_id):
 
 
 @app.route('/profile/myorders')
+@login_required
 def myorders():
+    usr = get_curr_user()
+    orders = ApexOrder.query.filter_by(requestor_id=usr.id).all()
+    return render_template('myorders.html', css=url_for('static', filename='css/myorders.css'),
+                           orders=orders, user=usr)
+
+
+@app.route('/profile/myorders/<int:order_id>')
+@login_required
+def myorders_id(order_id):
     pass

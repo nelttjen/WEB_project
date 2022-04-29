@@ -6,7 +6,7 @@
 {% block container %}
     <div class="topup">
         <h1>Пополнение баланса</h1>
-        <h3>Ваш баланс: {{user.balance}} руб</h3>
+        <h3>Ваш баланс: {{balance}} руб</h3>
         <div class="info-div mb-4">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}

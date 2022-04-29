@@ -8,8 +8,8 @@
             <p>Требуемый ранг: <span class="hightlight">{{order.to_points}}</span></p>
             <p>Модификации: {% if order.addons %}order.addons{% else %}нет{% endif %}</p>
             <p>Данные аккаунта <span class="hightlight">предоставлены</span></p>
-            {% if used_promo %} <p>Примененный промокод: <span style="color: #affbff; font-weight: 600;">{{used_promo.code}}</span>, скидка <span class="hightlight">{{used_promo.discount}}%</span></p>{% endif %}
-            <p>Цена: <span class="hightlight {% if price2 and price2 != price1 %}discount{% endif %}">{{price1}}</span>{% if price2 and price2 != price1 %}<span class="hightlight"> {{price2}}</span>{% endif %}</p>
+            {% if used_promo %} <p>Примененный промокод: <span style="color: #5b088e; font-weight: 700;">{{used_promo.code}}</span>, скидка <span class="hightlight">{{used_promo.discount}}%</span></p>{% endif %}
+            <p>Цена: <span class="hightlight {% if price2 and price2 != price1 %}discount{% endif %}">{{price1}}</span>{% if price2 and price2 != price1 %}<span class="hightlight"> {{price2}}</span> руб{% endif %}</p>
             <p>Ваш баланс: <span class="hightlight">{{user.balance}}</span></p>
             {% with price_min = price2 if price2 else price1 %}
                 <div class="refs">
