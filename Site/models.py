@@ -114,3 +114,21 @@ class ApexOrder(db.Model, SerializerMixin):
     date_banned = db.Column(db.String)
 
     info = db.Column(db.String)
+
+
+class Promo(db.Model, SerializerMixin):
+    __tablename__ = 'promocodes'
+
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String, nullable=False)
+    uses_left = db.Column(db.Integer, nullable=False, default=10)
+    discount = db.Column(db.Integer, nullable=False)
+
+    creation_date = db.Column(db.String, nullable=False)
+    valid_hours = db.Column(db.String, nullable=False, default=24)
+
+    type = db.Column(db.Integer, nullable=False)
+    # types
+    # 0 - everyday
+    # 1 - private
+

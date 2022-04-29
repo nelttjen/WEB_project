@@ -57,6 +57,9 @@ def login():
         user_db = User.query.filter_by(login=user_login).first()
         if user_db and check_password_hash(user_db.password, password):
             login_user(user_db)
+            _next = request.args.get('next')
+            if _next:
+                return redirect(url_for(_next.split('/')[-1]))
             return redirect(url_for('profile'))
         else:
             flash("Логин или пароль неверны")

@@ -15,7 +15,6 @@
     position: relative;
     width: 800px;
     height: 100%;
-    outline: 5px solid orange;
     margin: auto;
 }
 
@@ -36,6 +35,9 @@
     position: absolute;
     top: calc(50% - 20px);
     right: 0;
+}
+
+.order-button {
     width: 200px;
     height: 40px;
     text-align: center;
@@ -54,7 +56,6 @@
     width: calc(100% - 154px - 200px);
     height: 100%;
     padding: 5px;
-    outline: 2px solid red;
 }
 
 .coupon-text p {
@@ -67,4 +68,62 @@
 .coupon-text span {
     color: #affbff;
     font-weight: 500;
+}
+
+.order-main {
+    width: fit-content;
+    margin: 30px auto;
+    border: 3px dashed #925dff;
+    border-radius: 0.6rem;
+}
+
+.calculator-bottom {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    /* outline: 5px solid orange; */
+    align-items: flex-end;
+}
+
+.code {
+    position: absolute;
+    text-align: center;
+    width: 250px;
+    top: 0;
+    right: 30px;
+}
+
+.account-details {
+    position: absolute;
+    left: 30px;
+}
+
+.account-details p {
+    font-weight: 500;
+    font-size: 24px;
+    color: #2f074f;
+}
+
+.account-details input {
+    width: 250px;
+}
+
+.account-details div {
+    margin-bottom: 15px;
+}
+
+.form-button {
+    width: 250px;
+    position: absolute;
+    right: 30px;
+    bottom: 25px;
+}
+
+.bottom-input {
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.purple {
+    color: #8f1ee9;;
 }
