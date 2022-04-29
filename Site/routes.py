@@ -1,5 +1,7 @@
 import datetime
 import os.path
+import random
+import string
 
 from flask import render_template, url_for, request, redirect, flash
 from flask_login import current_user, login_required
@@ -9,7 +11,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from Site import app, db, launch
-from Site.models import User, Apikey, BalanceRequest
+from Site.models import User, Apikey, BalanceRequest, Promo
 from Site.settings import *
 from Site.api import create_apikey
 
@@ -22,16 +24,55 @@ def get_user_nick():
     return nick
 
 
+_promo_check_last = datetime.datetime(2000, 11, 11, 11, 11, 11)
+
+
+def check_everyday_promo():
+    global _promo_check_last
+    _delta = datetime.datetime.now() - _promo_check_last
+    if _delta.seconds + (_delta.days * 3600 * 24) > 3600:
+        _promo_check_last = datetime.datetime.now()
+        promo = Promo.query.filter_by(type=0).first()
+        if not promo:
+            update_everyday_promo()
+        else:
+            d, m, y, H, M, S = map(int, promo.creation_date.split('.'))
+            created = datetime.datetime(y, m, d, H, M, S)
+            promo_delta = datetime.datetime.now() - created
+            if promo_delta > datetime.timedelta(seconds=int(promo.valid_hours) * 60 * 60):
+                update_everyday_promo()
+
+
+def update_everyday_promo():
+    promos = Promo.query.filter_by(type=0).all()
+    if promos:
+        for i in promos:
+            db.session.delete(i)
+        db.session.commit()
+    _new = Promo(
+        code=''.join(random.sample(string.ascii_letters + string.digits, 7)),
+        uses_left=10,
+        discount=33,
+        creation_date=datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S'),
+        valid_hours=24,
+        type=0
+    )
+    db.session.add(_new)
+    db.session.commit()
+
+
 @app.route('/')
 @app.route('/index')
 def index():
+    check_everyday_promo()
     ref = request.args.get("ref")
     if ref:
         return redirect(url_for('register', ref=ref))
+    promo = Promo.query.filter_by(type=0).first()
     return render_template("index.html",
                            css=url_for('static', filename='css/index.css'),
                            user=User.query.get(current_user.get_id()),
-                           promo=None)
+                           promo=promo)
 
 
 @app.route('/test')
@@ -178,6 +219,8 @@ def topup():
                 balance = round(float(balance), 2)
                 if balance > 300000:
                     flash('Максимальная сумма пополнения - 300000')
+                elif balance <= 0:
+                    flash('Сумма пополнения должна быть больше 0')
                 else:
                     _new = BalanceRequest(
                         login_for=usr.login,
@@ -197,4 +240,8 @@ def topup():
 @app.route('/order')
 @login_required
 def order():
-    return
+    check_everyday_promo()
+    usr = User.query.get(current_user.get_id())
+    promo = Promo.query.filter_by(type=0).first()
+    return render_template('order.html', css=url_for('static', filename='css/order.css'),
+                           user=usr, promo=promo)
