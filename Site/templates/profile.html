@@ -10,11 +10,11 @@
     <div class="profile-container">
         <h1>Профиль пользователя {{user.login}}</h1>
         <div class="info mb-4">
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(True) %}
                 {% if messages %}
-                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+                <ul class="flashes info" style="list-style: none; padding-left: 40px; display: block;">
                 {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <li {% if message[0] == 'succ'%}class="info-green"{% else %}class="info"{% endif %}>{{ message[1] }}</li>
                 {% endfor %}
                 </ul>
                 {% endif %}

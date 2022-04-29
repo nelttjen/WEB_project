@@ -1,51 +1,17 @@
-{% extends "base.html" %}
-{% block head %}
-    {{super()}}
-    <link rel="stylesheet" href="{{css|safe}}">
-    <script async src="{{url_for('static', filename='js/order.js')}}"></script>
-{% endblock %}
-{% block container %}
-    {% if promo.uses_left > 0 %}
-    <div class="coupon">
-        <div class="coupon-content">
-            <div class="coupon-image" id="code-setter">
-                <span id="promocode">{{promo.code}}</span>
+{% extends "order_base.html" %}
+{% block order %}
+    <form action="" method="post" enctype="multipart/form-data" onsubmit="return order_validate()">
+        {% include "include/calc.html"%}    
+        <div class="calculator-bottom">
+            <input type="text" class="form-control code bottom-input purple" placeholder="Промокод" name="code" id="code">
+            <div class="account-details">
+                <p class="form-label">Данные аккаунта</p>
+                <input type="text" class="form-control mb-2 bottom-input purple" placeholder="Логин или почта" name="order_1" id="order_1">
+                <input type="password" class="form-control mb-2 bottom-input" placeholder="Пароль" name="order_2" id="order_2">
             </div>
-            <div class="coupon-text">
-                <p>Сохраните <span>33%</span> по промокоду <span>{{promo.code}}</span>!</p>
-                <p>Осталось использований сегодня: <span>{{promo.uses_left}}</span></p>
-            </div>
-            <button class="coupon-button order-button" id="code-setter">Применить</button>
+            <!-- <p>Ваш баланс: <span class="sum">{{user.balance}}</span> руб</p> -->
+            <button type="submit" class="submit-button form-button">Перейти к оформлению</button>
         </div>
-    </div>
-    {% endif %}
-    <div class="order-main">
-        <div class="order-top-text mt-3 mb-3">
-            <h1 style="text-align: center; color: #2f074f;">Оформление заказа</h1>
-        </div>
-        <p>
-            {% with messages = get_flashed_messages(True) %}
-                {% if messages %}
-                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
-                {% for message in messages %}
-                    <li {% if message[0] == 'succ'%}class="info-green"{% else %}class="info"{% endif %}>{{ message[1] }}</li>
-                {% endfor %}
-                </ul>
-                {% endif %}
-            {% endwith %}
-        </p>
-        <form action="" method="post" enctype="multipart/form-data" onsubmit="return order_validate()">
-            {% include "include/calc.html"%}    
-            <div class="calculator-bottom">
-                <input type="text" class="form-control code bottom-input purple" placeholder="Промокод" name="code" id="code">
-                <div class="account-details">
-                    <p class="form-label">Данные аккаунта</p>
-                    <input type="text" class="form-control mb-2 bottom-input purple" placeholder="Логин или почта" name="order_1" id="order_1">
-                    <input type="password" class="form-control mb-2 bottom-input" placeholder="Пароль" name="order_2" id="order_2">
-                </div>
-                <button type="submit" class="submit-button form-button">Перейти к оформлению</button>
-            </div>
-            
-        </form>
-    </div>
+    </form>
 {% endblock %}
+

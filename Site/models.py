@@ -94,12 +94,16 @@ class ApexOrder(db.Model, SerializerMixin):
 
     status = db.Column(db.Integer, default=0)
     # statuses
+    # -1 - pending confirm
     # 0 - created
     # 1 - accepted
     # 2 - in_progress
     # 3 - done
     # 4 - canceled
     # 5 - banned
+
+    confirm_code = db.Column(db.String, nullable=False)
+    used_promo = db.Column(db.String)
 
     from_points = db.Column(db.Integer, nullable=False)
     to_points = db.Column(db.Integer, nullable=False)

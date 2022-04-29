@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block head %}
+    {{super()}}
+    <link rel="stylesheet" href="{{css|safe}}">
+    <script async src="{{url_for('static', filename='js/order.js')}}"></script>
+{% endblock %}
+{% block container %}
+    {% if promo and promo.uses_left > 0 %}
+    <div class="coupon">
+        <div class="coupon-content">
+            <div class="coupon-image" id="code-setter">
+                <span id="promocode">{{promo.code}}</span>
+            </div>
+            <div class="coupon-text">
+                <p>Сохраните <span>33%</span> по промокоду <span>{{promo.code}}</span>!</p>
+                <p>Осталось использований сегодня: <span>{{promo.uses_left}}</span></p>
+            </div>
+            <button class="coupon-button order-button" id="code-setter">Применить</button>
+        </div>
+    </div>
+    {% endif %}
+    <div class="order-main">
+        <div class="order-top-text mt-3 mb-3">
+            <h1 style="text-align: center; color: #2f074f;">Оформление заказа</h1>
+        </div>
+        <p>
+            {% with messages = get_flashed_messages(True) %}
+                {% if messages %}
+                <ul class="flashes info" style="list-style: none; padding-left: 40px; display: block;">
+                {% for message in messages %}
+                    <li {% if message[0] == 'succ'%}class="info-green"{% else %}class="info"{% endif %}>{{ message[1] }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </p>
+        {% block order%}
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "order_base.html" %}
+{% block order %}
+    <div class="order-details">
+        <h2 class="order-id">Заказ #{{order.id}}</h2>
+        <h3 class="details-top">Детали заказа:</h3>
+        <div class="details">
+            <p>Текущий ранг: <span class="hightlight">{{order.from_points}}</span></p>
+            <p>Требуемый ранг: <span class="hightlight">{{order.to_points}}</span></p>
+            <p>Модификации: {% if order.addons %}order.addons{% else %}нет{% endif %}</p>
+            <p>Данные аккаунта <span class="hightlight">предоставлены</span></p>
+            {% if used_promo %} <p>Примененный промокод: <span style="color: #affbff; font-weight: 600;">{{used_promo.code}}</span>, скидка <span class="hightlight">{{used_promo.discount}}%</span></p>{% endif %}
+            <p>Цена: <span class="hightlight {% if price2 and price2 != price1 %}discount{% endif %}">{{price1}}</span>{% if price2 and price2 != price1 %}<span class="hightlight"> {{price2}}</span>{% endif %}</p>
+            <p>Ваш баланс: <span class="hightlight">{{user.balance}}</span></p>
+            {% with price_min = price2 if price2 else price1 %}
+                <div class="refs">
+                    {% if user.balance < price_min %}
+                    <a href="/topup" class="submit-button a-button">Пополнить баланс</a>
+                    {% else %}
+                    <a href="/order/confirm/{{order.confirm_code}}?action=accept" class="submit-button a-button">Подтвердить</a>
+                    {% endif %}
+                    <a href="/order/confirm/{{order.confirm_code}}?action=reject" class="reject-button a-button">Отменить</a>
+                </div>
+                
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}

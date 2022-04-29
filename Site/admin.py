@@ -60,7 +60,7 @@ def admin():
                            total_users=len(total_users), total_topup=len(total_topup),
                            active_orders=len(active_orders), completed_orders=len(completed_orders),
                            total_boosters=len(total_boosters),
-                           total_orders_sum=sum([i.price for i in total_orders_sum]),
+                           total_orders_sum=round(sum([i.price for i in total_orders_sum]), 2),
                            total_apikeys=len(total_apikeys), info_class='info'
                            )
 
