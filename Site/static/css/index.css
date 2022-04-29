@@ -1,8 +1,146 @@
-.calculator {
-    width: 800px;
-    height: auto;
-    border: 1px solid black;
-    border-radius: 30px;
-    margin: 100px auto;
+.container {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+}
+
+.hello-image {
+    position: relative;
+    font-family: 'Red Hat Mono', monospace;
+    width: 100%;
+    height: 800px;
+    background: url(../img/background_info.png) no-repeat top center;
+    background-size: 100% 100%;
+}
+
+.hello-block {
+    position: absolute;
     padding: 25px;
+    width: fit-content;
+    display: block;
+    top: 80px;
+    left: 10%;
+}
+
+.hello-text-1 {
+    color: #8f1aeb;
+    font-size: 70px;
+    font-weight: 700;
+}
+
+.hello-text-2 {
+    font-size: 25px;
+    color: bisque;
+}
+
+.divider {
+    margin: 50px 0;
+    width: 200px;
+    height: 5px;
+    border-radius: 2.5px;
+    background-color: #925dff;
+}
+
+.apex-logo {
+    background: url(../img/apex_logo.png);
+    width: 512px;
+    height: 512px;  
+    position: absolute;
+    right: 10%;
+    top: calc(50% - 256px);
+}
+
+.coupon {
+    width: 450px;
+    font-size: 24px;
+}
+
+.coupon div {
+    color: #ffffff;
+    margin-top: 20px;
+}
+
+.coupon-promo {
+    background: url(../img/coupon.png) no-repeat;
+    width: 152px;
+    height: 48px;
+    text-align: center;
+    line-height: 45px;
+    color: #dbb3ff;
+}
+
+.hello-calculator a, .calc-redirect a{
+    height: 50px;
+    line-height: 35px;
+    font-size: large;
+    background-color: #a651c9;
+    border: 1px solid #a651c9;
+    color: #f0f0f0;
+}
+
+.hello-calculator a:hover, .calc-redirect a:hover {
+    background-color: #9b25c8;
+    border: 1px solid #6114c9; 
+}
+
+.why-us {
+    width: 100%;
+    height: max-content;
+    position: relative;
+}
+
+.why-us-text {
+    color: #2f074f;
+}
+
+.why-us-top {
+    width: 500px;
+    text-align: center;
+    margin: 50px auto;
+}
+
+.why-us-top .divider {
+    position: absolute;
+    left: calc(50% - 100px);
+    margin: 25px 0;
+}
+
+.why-us-info {
+    margin-top: 75px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px 60px;
+    padding: 10px 75px;
+    text-align: center;
+}
+
+.info-div {
+    flex: 1 0 25%;
+    width: 400px;
+    height: auto;
+    padding: 20px;
+    border: 2px dashed #6114c9;
+    border-radius: 1.5rem;
+}
+
+.info-div h2 {
+    color: #8010d8;
+}
+
+.calc-preview {
+    margin: auto;
+    text-align: center;
+    width: 750px;
+}
+
+.calc-text {
+    color: #2f074f;
+}
+
+.calc-redirect a{
+    margin-top: 0;
+    width: 300px;
+    margin: auto;
 }

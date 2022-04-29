@@ -2,8 +2,8 @@
 {% block head %}
     {{super()}}
     <link rel="stylesheet" href="{{css|safe}}">
-    <script async src="../static/js/recovery.js"></script>
-    <script async src="../static/js/showPassword.js"></script>
+    <script async src="{{url_for('static', filename='js/recovery.js')}}"></script>
+    <script async src="{{url_for('static', filename='js/showPassword.js')}}"></script>
 {% endblock %}
 {% block container %}
     <div class="recovery-container">

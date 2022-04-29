@@ -141,10 +141,13 @@ class BalanceAccept(Resource):
         parser.add_argument('apikey', required=True)
         parser.add_argument('request_id', required=True)
         parser.add_argument('acceptor_id', required=True)
+        parser.add_argument('action', required=True)
         args = parser.parse_args()
-        if not args.apikey or not args.request_id or not args.acceptor_id:
+        if not args.apikey or not args.request_id or not args.acceptor_id or not args.action:
             return abort(401, message='Not enough params')
         apikey, valid, msg = get_and_check_apikey(args.apikey)
+        if not valid:
+            return abort(401, message='Invalid apikey')
 
         def accept_request(request, a_id):
             request.accepted = 1
@@ -158,14 +161,29 @@ class BalanceAccept(Resource):
                 if usr.parent != -1:
                     usr2 = User.query.get(usr.parent)
                     usr2.balance += round(_sum / 10, 2)
+        if args.action not in ('accept', 'reject'):
+            return abort(401, message='Invalid action')
         if apikey.access_level >= 2:
             if args.get('request_id') == 'all':
                 for req in BalanceRequest.query.filter(BalanceRequest.accepted == 0).all():
-                    accept_request(req, int(args.acceptor_id))
+                    if req.accepted == 0:
+                        if args.action == 'accept':
+                            accept_request(req, int(args.acceptor_id))
+                        else:
+                            req.accepted = -1
+                            req.acceptor_id = int(args.acceptor_id)
+                    else:
+                        continue
             else:
                 _id = args.get('request_id')
-                accept_request(BalanceRequest.query.filter_by(id=_id).first(), int(args.acceptor_id))
+                req = BalanceRequest.query.filter_by(id=_id).first()
+                if req and req.accepted == 0:
+                    if args.action == 'accept':
+                        accept_request(req, int(args.acceptor_id))
+                    else:
+                        req.accepted = -1
+                        req.acceptor_id = int(args.acceptor_id)
             db.session.commit()
-            return jsonify({'message': 'OK'})
+            return jsonify({'message': 'OK', 'action': f'{args.action}'})
         else:
             abort(401, message='Apikey access level is to low')

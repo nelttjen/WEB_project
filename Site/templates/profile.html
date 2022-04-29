@@ -2,11 +2,10 @@
 {% block head %}
     {{super()}}
     <link rel="stylesheet" href={{css|safe}}>
-    <script async src="../static/js/checkMonth.js"></script>
-    <script async src="../static/js/showPassword.js"></script>
-    <script async src="../static/js/profile.js"></script>
+    <script async src="{{url_for('static', filename='js/checkmonth.js')}}"></script>
+    <script async src="{{url_for('static', filename='js/showPassword.js')}}"></script>
+    <script async src="{{url_for('static', filename='js/profile.js')}}"></script>
 {% endblock %}
-
 {% block container %}
     <div class="profile-container">
         <h1>Профиль пользователя {{user.login}}</h1>

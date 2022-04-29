@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
     {{super()}}
-    <link rel="stylesheet" href="../static/css/admin_base.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/admin_base.css')}}">
 {% endblock %}  
 {% block container %}
     <div class="admin-panel">
@@ -29,5 +29,6 @@
         </p>
         {% block panel %}
         {% endblock %}
+        <a href="/profile" class="submit-button a-button">Вернуться в профиль</a>
     </div>
 {% endblock %}
