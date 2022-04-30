@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{css|safe}}">
+    <title>Правила сервиса</title>
+{% endblock %}
+{% block container %}
+    <div class="rules">
+        <h1 class="h-info">Правила сервиса</h1>
+        <div class="rules-block">
+            <h2 class="h-info">1. Общие правила</h2>
+            <div class="rules-subblock">
+                <p>1. С рефералов вы получаете 10% от их суммы пополнения.</p>
+                <p>2. Все пароли хранятся в зашифрованом виде.</p>
+                <p>3. Вы можете отменить заказ только пока он не был принят бустером.</p>
+            </div>
+            <h2 class="h-info">2. Lorem, ipsum dolor.</h2>
+            <div class="rules-subblock">
+                <p>1. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi fuga totam nesciunt enim assumenda quibusdam molestiae reprehenderit in vero optio necessitatibus distinctio pariatur porro incidunt repellat, cupiditate et tempora laudantium.
+                </p>
+                <p>2. Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis vitae minima autem, porro at sint.</p>
+                <p>3. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cum similique itaque corporis atque beatae eos! Similique, natus expedita.</p>
+            </div>
+            <h2 class="h-info">3. Lorem, ipsum.</h2>
+            <div class="rules-subblock">
+                <p>1. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi fuga totam nesciunt enim assumenda quibusdam molestiae reprehenderit in vero optio necessitatibus distinctio pariatur porro incidunt repellat, cupiditate et tempora laudantium.
+                </p>
+                <p>2. Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis vitae minima autem, porro at sint.</p>
+                <p>3. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cum similique itaque corporis atque beatae eos! Similique, natus expedita.</p>
+            </div>
+            <h2 class="h-info">4. Lorem, ipsum dolor Lorem.</h2>
+            <div class="rules-subblock">
+                <p>1. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi fuga totam nesciunt enim assumenda quibusdam molestiae reprehenderit in vero optio necessitatibus distinctio pariatur porro incidunt repellat, cupiditate et tempora laudantium.
+                </p>
+                <p>2. Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis vitae minima autem, porro at sint.</p>
+                <p>3. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cum similique itaque corporis atque beatae eos! Similique, natus expedita.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

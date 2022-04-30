@@ -433,3 +433,9 @@ def myorders_id(order_id):
                            css=url_for('static', filename='css/myorders.css'),
                            order=_order, user=usr
                            )
+
+
+@app.route('/rules')
+def rules():
+    return render_template('rules.html', css=url_for('static', filename='css/rules.css'),
+                           user=None)
