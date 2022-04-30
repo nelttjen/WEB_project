@@ -1,4 +1,8 @@
 {% extends "order_base.html" %}
+{% block head %}
+    {{super()}}
+    <title>Подтверждение заказа</title>
+{% endblock %}
 {% block order %}
     <div class="order-details">
         <h2 class="order-id">Заказ #{{order.id}}</h2>
@@ -10,7 +14,7 @@
             <p>Данные аккаунта <span class="hightlight">предоставлены</span></p>
             {% if used_promo %} <p>Примененный промокод: <span style="color: #5b088e; font-weight: 700;">{{used_promo.code}}</span>, скидка <span class="hightlight">{{used_promo.discount}}%</span></p>{% endif %}
             <p>Цена: <span class="hightlight {% if price2 and price2 != price1 %}discount{% endif %}">{{price1}}</span>{% if price2 and price2 != price1 %}<span class="hightlight"> {{price2}}</span> руб{% endif %}</p>
-            <p>Ваш баланс: <span class="hightlight">{{user.balance}}</span></p>
+            <p>Ваш баланс: <span class="hightlight">{{balance}}</span> руб</p>
             {% with price_min = price2 if price2 else price1 %}
                 <div class="refs">
                     {% if user.balance < price_min %}

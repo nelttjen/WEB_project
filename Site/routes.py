@@ -328,9 +328,10 @@ def confirm():
     price2 = 0
     if _promo:
         price2, _promo = calculate_with_promo(_order.price, _promo, ret_promo=True)
+    balance = round(usr.balance, 2)
     return render_template('order_confirm.html', css=url_for('static', filename='css/order.css'),
                            user=usr, promo=None, used_promo=_promo, order=_order,
-                           price1=price1, price2=price2)
+                           price1=price1, price2=price2, balance=balance)
 
 
 @app.route('/order/confirm/<string:order_id>')

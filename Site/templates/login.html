@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
     {{ super() }}
+    <title>Авторизация</title>
     <link rel="stylesheet" href="{{css|safe}}">
     <script src="{{url_for('static', filename='js/showPassword.js')}}"></script>
     <script src="{{url_for('static', filename='js/login.js')}}"></script>

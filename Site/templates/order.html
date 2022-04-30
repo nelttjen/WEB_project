@@ -1,4 +1,8 @@
 {% extends "order_base.html" %}
+{% block head %}
+    {{super()}}
+    <title>Оформление заказа</title>
+{% endblock %}
 {% block order %}
     <form action="" method="post" enctype="multipart/form-data" onsubmit="return order_validate()">
         {% include "include/calc.html"%}    
