@@ -28,6 +28,15 @@ def get_user_nick():
 _promo_check_last = datetime.datetime(2000, 11, 11, 11, 11, 11)
 
 
+def check_promo_expired(promo):
+    d, m, y, H, M, S = map(int, promo.creation_date.split('.'))
+    created = datetime.datetime(y, m, d, H, M, S)
+    promo_delta = datetime.datetime.now() - created
+    if promo_delta > datetime.timedelta(seconds=int(promo.valid_hours) * 60 * 60):
+        return True
+    return False
+
+
 def check_everyday_promo(force=False):
     global _promo_check_last
     _delta = datetime.datetime.now() - _promo_check_last
@@ -37,10 +46,7 @@ def check_everyday_promo(force=False):
         if not promo:
             update_everyday_promo()
         else:
-            d, m, y, H, M, S = map(int, promo.creation_date.split('.'))
-            created = datetime.datetime(y, m, d, H, M, S)
-            promo_delta = datetime.datetime.now() - created
-            if promo_delta > datetime.timedelta(seconds=int(promo.valid_hours) * 60 * 60):
+            if check_promo_expired(promo):
                 update_everyday_promo()
 
 
@@ -74,9 +80,11 @@ def calculate_with_promo(price, promo, ret_promo=False):
         if ret_promo:
             return price, promo
         return price
-    check_everyday_promo(force=True)
+
     _promo = Promo.query.filter_by(code=promo).first()
-    if _promo and _promo.uses_left > 0:
+    if _promo and _promo.type == 0:
+        check_everyday_promo(force=True)
+    if _promo and _promo.uses_left > 0 and not check_promo_expired(_promo):
         price = price - price * (_promo.discount / 100)
     if ret_promo:
         return price, _promo
