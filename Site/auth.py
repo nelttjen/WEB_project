@@ -66,7 +66,7 @@ def login():
             _login = user_login
         if _class == 'info-green':
             return redirect(url_for('login'))
-    return render_template("login.html", title='Авторизация', css=url_for('static', filename='css/login.css'),
+    return render_template("login.html", css=url_for('static', filename='css/login.css'),
                            login=_login, user=None, info_class=_class)
 
 
@@ -107,7 +107,7 @@ def register():
             except sqlalchemy.exc.IntegrityError:
                 flash("Логин уже занят!")
 
-    return render_template('register.html', title='Регистрация', css=url_for('static', filename='css/register.css'),
+    return render_template('register.html', css=url_for('static', filename='css/register.css'),
                            info="", referal=fref, user=None)
 
 
