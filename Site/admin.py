@@ -54,9 +54,11 @@ def admin():
     active_orders = ApexOrder.query.filter_by(status=2).all()
     completed_orders = ApexOrder.query.filter_by(status=3).all()
     total_boosters = Booster.query.all()
-    total_orders_sum = ApexOrder.query.filter(ApexOrder.status != 4 and
-                                              ApexOrder.status != 5 and
-                                              ApexOrder.status != -1).all()
+    total_orders_sum = ApexOrder.query.filter((ApexOrder.status != 4) &
+                                              (ApexOrder.status != 5) &
+                                              (ApexOrder.status != -1)).all()
+    for i in total_orders_sum:
+        print(i.to_dict())
     return render_template('admin.html', css=url_for('static', filename='css/admin.css'), user=usr,
                            time=get_deltatime(launch, datetime.datetime.now()),
                            total_users=len(total_users), total_topup=len(total_topup),
