@@ -307,7 +307,7 @@ def order():
             db.session.add(_new)
             db.session.commit()
             return redirect(url_for('confirm', order_code=_order_confirm_code))
-        except (ValueError, AssertionError):
+        except (ValueError, AssertionError, TypeError):
             flash('Что-то пошло не так. Попробуйте ещё раз.')
 
     return render_template('order.html', css=url_for('static', filename='css/order.css'),
