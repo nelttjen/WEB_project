@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{css|safe}}">
+{% endblock %}
+{% block container %}
+    <div class="order-info myorders">
+        <h1 class="h-info">Информация о заказе #{{order.id}}</h1>
+        <p>
+            {% with messages = get_flashed_messages(True) %}
+                {% if messages %}
+                <ul class="flashes info" style="list-style: none; padding-left: 40px; display: block;">
+                {% for message in messages %}
+                    <li {% if message[0] == 'succ'%}class="info-green"{% else %}class="info"{% endif %}>{{ message[1] }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </p>
+        <h2 class="h-info mt-3" style="text-align: start;">Детали заказа</h2>
+        <div class="order-show-details mt-4">
+            <p>Текущий ранг: <span class="hightlight">{{order.from_points}}</span></p>
+            <p>Требуемый ранг: <span class="hightlight">{{order.to_points}}</span></p>
+            <p>Модификации: {% if order.addons %}order.addons{% else %}нет{% endif %}</p>
+            <p>Данные аккаунта <span class="hightlight">предоставлены</span></p>
+            <p>Информация: Буст с <span class="hightlight">{{order.from_points}}</span> RP до <span class="hightlight">{{order.to_points}}</span> RP</p>
+            <p>Цена: <span class="hightlight">{{order.price}}</span> руб.</p>
+            <p>Статус: 
+                <span class="status-{{['pending', 'review', 'accepted', 'in-progress', 'done', 'canceled', 'banned'][order.status + 1]}}">
+                {{['Не подтвержден', 'Ожидание бустера...', 'Принят бустером', 'Выполняется', 'Завершен', 'Отменен', 'Заблокирован'][order.status + 1]}}
+                </span>
+            </p>
+            {% if order.status == 0 %}
+            <a href="/profile/myorders/order?order_code={{order.confirm_code}}&action=cancel" class="submit-button a-button">Отменить</a>
+            {% elif order.status == 2 %}
+            <a href="/profile/myorders/order?order_code={{order.confirm_code}}&action=confirm" class="submit-button a-button">Подтвердить выполнение</a>
+            {% endif %}
+            <a href="/profile/myorders" class="submit-button a-button">Вернуться к заказам</a>
+        </div>
+    </div>
+{% endblock %}

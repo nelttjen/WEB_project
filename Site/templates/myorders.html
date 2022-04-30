@@ -17,6 +17,7 @@
                 {% endif %}
             {% endwith %}
         </p>
+        <a href="/profile" class="submit-button a-button">Вернуться в профиль</a>
         <div class="orders">
             {% if orders %}
                 {% for order in orders %}
@@ -29,7 +30,7 @@
                             </span>
                         </h5>
                         {% if order.status != -1 %}
-                        <a href="/profile/myorders/{{order.id}}" class="submit-button a-button">Подробнее</a>
+                        <a href="/profile/myorders/order/{{order.id}}" class="submit-button a-button">Подробнее</a>
                         {% else %}
                         <a href="/order/confirm?order_code={{order.confirm_code}}" class="submit-button a-button">Подтвердить</a>
                         {% endif %}
