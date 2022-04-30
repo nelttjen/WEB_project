@@ -2,12 +2,12 @@ import datetime
 import os
 import requests
 
-from flask import url_for, render_template, request, flash, get_flashed_messages
+from flask import url_for, render_template, request, flash
 from flask_login import current_user
 from werkzeug.utils import redirect
 from urllib.parse import urlparse, urljoin
 
-from Site import app, db, launch
+from Site import app, launch
 from Site.models import *
 from Site.api import create_apikey, get_and_check_apikey
 

@@ -70,6 +70,10 @@ def calculate_sum_order(rank1, rank2):
 def calculate_with_promo(price, promo, ret_promo=False):
     if isinstance(promo, Promo):
         promo = promo.code
+    if not promo:
+        if ret_promo:
+            return price, promo
+        return price
     check_everyday_promo(force=True)
     _promo = Promo.query.filter_by(code=promo).first()
     if _promo and _promo.uses_left > 0:
@@ -318,12 +322,12 @@ def confirm():
     _promo = None
     if promo:
         _promo = Promo.query.filter_by(code=promo).first()
-        if not promo or _promo.uses_left <= 0:
+        if not _promo or _promo.uses_left <= 0:
             _promo = None
     price1 = round(_order.price, 2)
     price2 = 0
-    if promo:
-        price2 = round(calculate_with_promo(_order.price, promo), 2)
+    if _promo:
+        price2, _promo = calculate_with_promo(_order.price, _promo, ret_promo=True)
     return render_template('order_confirm.html', css=url_for('static', filename='css/order.css'),
                            user=usr, promo=None, used_promo=_promo, order=_order,
                            price1=price1, price2=price2)
