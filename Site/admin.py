@@ -2,12 +2,12 @@ import datetime
 import os
 import requests
 
-from flask import url_for, render_template, request, flash, get_flashed_messages
+from flask import url_for, render_template, request, flash
 from flask_login import current_user
 from werkzeug.utils import redirect
 from urllib.parse import urlparse, urljoin
 
-from Site import app, db, launch
+from Site import app, launch
 from Site.models import *
 from Site.api import create_apikey, get_and_check_apikey
 
@@ -54,13 +54,15 @@ def admin():
     active_orders = ApexOrder.query.filter_by(status=2).all()
     completed_orders = ApexOrder.query.filter_by(status=3).all()
     total_boosters = Booster.query.all()
-    total_orders_sum = ApexOrder.query.filter(ApexOrder.status != 4 and ApexOrder.status != 5).all()
+    total_orders_sum = ApexOrder.query.filter(ApexOrder.status != 4 and
+                                              ApexOrder.status != 5 and
+                                              ApexOrder.status != -1).all()
     return render_template('admin.html', css=url_for('static', filename='css/admin.css'), user=usr,
                            time=get_deltatime(launch, datetime.datetime.now()),
                            total_users=len(total_users), total_topup=len(total_topup),
                            active_orders=len(active_orders), completed_orders=len(completed_orders),
                            total_boosters=len(total_boosters),
-                           total_orders_sum=sum([i.price for i in total_orders_sum]),
+                           total_orders_sum=round(sum([i.price for i in total_orders_sum]), 2),
                            total_apikeys=len(total_apikeys), info_class='info'
                            )
 

@@ -6,7 +6,4 @@ class Config:
         self.app.config[key] = val
 
     def get(self, key):
-        try:
-            return self.app.config[key]
-        except:
-            return
+        return self.app.config.get(key)

@@ -10,11 +10,11 @@
     <div class="profile-container">
         <h1>Профиль пользователя {{user.login}}</h1>
         <div class="info mb-4">
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(True) %}
                 {% if messages %}
-                <ul class="flashes info" style="list-style: none; padding-left: 10px; display: block;">
+                <ul class="flashes info" style="list-style: none; padding-left: 40px; display: block;">
                 {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <li {% if message[0] == 'succ'%}class="info-green"{% else %}class="info"{% endif %}>{{ message[1] }}</li>
                 {% endfor %}
                 </ul>
                 {% endif %}
@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="balance mb-3">
-                <h3>Ваш баланс: {{user.balance}} руб</h3>
+                <h3>Ваш баланс: {{balance}} руб</h3>
                 <a href="/topup" class="btn btn-primary" style="margin-left: 10px;">Пополнить</a>
             </div>
             <div class="email mb-3">
@@ -122,6 +122,7 @@
         <div class="buttons">
             <a href="/logout" class="submit-button a-button">Выйти из аккаунта</a>
             <a href="/apikey" class="submit-button a-button">API ключ</a>
+            <a href="/profile/myorders" class="submit-button a-button">Мои заказы</a>
             {% if user.admin_status > 0 %}
             <a href="/admin" class="submit-button a-button" style="border: 1px solid rgb(152, 83, 83);">Админ панель</a>
             {% endif %}

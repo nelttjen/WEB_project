@@ -127,3 +127,44 @@
 .purple {
     color: #8f1ee9;;
 }
+
+.order-details {
+    padding: 50px;
+    padding-top: 0;
+    width: fit-content;
+}
+
+.order-id {
+    text-align: center; 
+    color: #2f074f;
+}
+
+.details-top {
+    margin-top: 30px;
+    color: #2f074f;
+}
+
+.details {
+    margin-top: 25px;
+}
+
+.details p {
+    margin: 0;
+    margin-top: 10px;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.hightlight {
+    color: #8f1ee9;;
+}
+
+.discount {
+    text-decoration: line-through;
+    color: crimson;
+}
+
+.refs {
+    display: flex;
+    gap: 25px;
+}

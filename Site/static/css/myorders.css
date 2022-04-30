@@ -1,0 +1,47 @@
+.myorders {
+    padding: 30px;
+    margin: 50px auto;
+    border: 3px dashed #925dff;
+    width: fit-content;
+}
+
+.h-info {
+    color: #2f074f; 
+    text-align: center;
+    font-weight: 600;
+}
+
+.order-details {
+    position: relative;
+    width: 500px;
+    border: 1px solid black;
+    padding: 20px;
+}
+
+.status-pending {
+    color: #ea5757;
+}
+
+.status-review {
+    color: #2f48f5;
+}
+
+.status-accepted {
+    color: #8037f0;
+}
+
+.status-in-progress {
+    color: #7315d1;
+}
+
+.status-done {
+    color: #9818e6;
+}
+
+.status-canceled {
+    color: #ff7f50;
+}
+
+.status-banned {
+    color: #dc143c;
+}

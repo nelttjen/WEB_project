@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{css|safe}}">
+{% endblock %}
+{% block container %}
+    <div class="myorders">
+        <h1 class="h-info">Мои заказы</h1>
+        <p>
+            {% with messages = get_flashed_messages(True) %}
+                {% if messages %}
+                <ul class="flashes info" style="list-style: none; padding-left: 40px; display: block;">
+                {% for message in messages %}
+                    <li {% if message[0] == 'succ'%}class="info-green"{% else %}class="info"{% endif %}>{{ message[1] }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
+        </p>
+        <div class="orders">
+            {% if orders %}
+                {% for order in orders %}
+                    <div class="order-details mt-4">
+                        <h5 class="h-info">Заказ #{{order.id}}</h5>
+                        <h5 class="h-info">Стоимость: {{order.price}} руб.</h5>
+                        <h5 class="h-info">Статус: 
+                            <span class="status-{{['pending', 'review', 'accepted', 'in-progress', 'done', 'canceled', 'banned'][order.status + 1]}}">
+                            {{['Не подтвержден', 'Ожидание бустера...', 'Принят бустером', 'Выполняется', 'Завершен', 'Отменен', 'Заблокирован'][order.status + 1]}}
+                            </span>
+                        </h5>
+                        {% if order.status != -1 %}
+                        <a href="/profile/myorders/{{order.id}}" class="submit-button a-button">Подробнее</a>
+                        {% else %}
+                        <a href="/order/confirm?order_code={{order.confirm_code}}" class="submit-button a-button">Подтвердить</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h2 class="h-info">У вас пока нет заказов.</h2>
+                <a href="/order" class="submit-button a-button">Сделать заказ</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

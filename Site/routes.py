@@ -3,6 +3,7 @@ import os.path
 import random
 import string
 
+import js2py
 from flask import render_template, url_for, request, redirect, flash
 from flask_login import current_user, login_required
 from datetime import date
@@ -10,8 +11,8 @@ from datetime import date
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from Site import app, db, launch
-from Site.models import User, Apikey, BalanceRequest, Promo
+from Site import app, db
+from Site.models import User, Apikey, BalanceRequest, Promo, ApexOrder
 from Site.settings import *
 from Site.api import create_apikey
 
@@ -27,10 +28,10 @@ def get_user_nick():
 _promo_check_last = datetime.datetime(2000, 11, 11, 11, 11, 11)
 
 
-def check_everyday_promo():
+def check_everyday_promo(force=False):
     global _promo_check_last
     _delta = datetime.datetime.now() - _promo_check_last
-    if _delta.seconds + (_delta.days * 3600 * 24) > 3600:
+    if _delta.seconds + (_delta.days * 3600 * 24) > 3600 or force:
         _promo_check_last = datetime.datetime.now()
         promo = Promo.query.filter_by(type=0).first()
         if not promo:
@@ -61,6 +62,31 @@ def update_everyday_promo():
     db.session.commit()
 
 
+def calculate_sum_order(rank1, rank2):
+    calc_sum = js2py.eval_js(open('data/calc_sum.js').read())
+    return calc_sum(rank1, rank2)
+
+
+def calculate_with_promo(price, promo, ret_promo=False):
+    if isinstance(promo, Promo):
+        promo = promo.code
+    if not promo:
+        if ret_promo:
+            return price, promo
+        return price
+    check_everyday_promo(force=True)
+    _promo = Promo.query.filter_by(code=promo).first()
+    if _promo and _promo.uses_left > 0:
+        price = price - price * (_promo.discount / 100)
+    if ret_promo:
+        return price, _promo
+    return price
+
+
+def get_curr_user():
+    return User.query.get(current_user.get_id())
+
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -71,16 +97,16 @@ def index():
     promo = Promo.query.filter_by(type=0).first()
     return render_template("index.html",
                            css=url_for('static', filename='css/index.css'),
-                           user=User.query.get(current_user.get_id()),
+                           user=get_curr_user(),
                            promo=promo)
 
 
-@app.route('/test')
-def test():
-    _delta = datetime.datetime.now() - launch
-    h, m, s = str(_delta).split(', ')[1].split(':') if str(_delta).count(',') > 0 else str(_delta).split(':')
-    stack = [int(_delta.days), int(h), int(m), int(float(s))]
-    return f'{int(_delta.days)} days, {int(h)} hours, {int(m)} minutes, {int(float(s))} seconds'
+# @app.route('/test')
+# def test():
+#     _delta = datetime.datetime.now() - launch
+#     h, m, s = str(_delta).split(', ')[1].split(':') if str(_delta).count(',') > 0 else str(_delta).split(':')
+#     stack = [int(_delta.days), int(h), int(m), int(float(s))]
+#     return f'{int(_delta.days)} days, {int(h)} hours, {int(m)} minutes, {int(float(s))} seconds'
 
 
 @app.route('/profile', methods=["GET", 'POST'])
@@ -88,9 +114,9 @@ def test():
 def profile():
     profile_id = request.args.get('user_id')
     superuser = None
+    cur_user = get_curr_user()
     if profile_id:
-        superuser = User.query.get(current_user.get_id())
-    cur_user = User.query.get(current_user.get_id())
+        superuser = cur_user
     if request.method == "POST":
         cur_email = current_user.email
         new_email = request.form.get("email")
@@ -173,6 +199,7 @@ def profile():
                                css=url_for('static', filename="css/profile.css"),
                                nickname=get_user_nick(),
                                user=cur_user,
+                               balance=round(cur_user.balance, 2),
                                profile_image=p_image,
                                birth=birth,
                                refs=refs,
@@ -184,7 +211,7 @@ def profile():
 @app.route('/apikey', methods=['GET', 'POST'])
 @login_required
 def apikey():
-    user = User.query.get(current_user.get_id())
+    user = get_curr_user()
     user_api = Apikey.query.filter_by(requestor_id=user.id).first()
     if request.method == 'POST':
         if user_api:
@@ -199,7 +226,7 @@ def apikey():
 @app.route('/delete_apikey')
 @login_required
 def delete_apikey():
-    user = User.query.get(current_user.get_id())
+    user = get_curr_user()
     Apikey.query.filter_by(requestor_id=user.id).delete()
     db.session.commit()
     return redirect(url_for('apikey'))
@@ -208,7 +235,7 @@ def delete_apikey():
 @app.route('/topup', methods=['GET', 'POST'])
 @login_required
 def topup():
-    usr = User.query.get(current_user.get_id())
+    usr = get_curr_user()
     _class = 'info'
     if request.method == 'POST':
         balance = request.form.get('money')
@@ -234,14 +261,124 @@ def topup():
             except ValueError:
                 flash('Что-то пошло не так. Попробуйте ещё раз.')
     return render_template('topup.html', css=url_for('static', filename='css/topup.css'),
-                           user=usr, info_class=_class)
+                           user=usr,
+                           balance=round(usr.balance, 2),
+                           info_class=_class)
 
 
-@app.route('/order')
+@app.route('/order', methods=['GET', 'POST'])
 @login_required
 def order():
     check_everyday_promo()
-    usr = User.query.get(current_user.get_id())
+    usr = get_curr_user()
     promo = Promo.query.filter_by(type=0).first()
+    if request.method == "POST":
+        try:
+            rank1 = int(request.form.get('from-input'))
+            rank2 = int(request.form.get('to-input'))
+            _log = request.form.get('order_1')
+            _pas = request.form.get('order_2')
+            assert _log and _pas
+            assert rank2 > rank1
+            assert 0 <= rank1 <= 20000 and 0 <= rank2 <= 20000
+            _sum = calculate_sum_order(rank1, rank2)
+            _hours = rank2 - rank1 // 100
+            _promo = request.form.get('code')
+            _order_confirm_code = ''.join(random.sample(string.ascii_letters, 32))
+            _new = ApexOrder(
+                requestor_id=usr.id,
+                account=f"{_log}:{_pas}",
+                status=-1,
+                confirm_code=_order_confirm_code,
+                used_promo=_promo,
+                from_points=rank1,
+                to_points=rank2,
+                price=_sum,
+                date_created=datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S'),
+            )
+            db.session.add(_new)
+            db.session.commit()
+            return redirect(url_for('confirm', order_code=_order_confirm_code))
+        except (ValueError, AssertionError):
+            flash('Что-то пошло не так. Попробуйте ещё раз.')
+
     return render_template('order.html', css=url_for('static', filename='css/order.css'),
                            user=usr, promo=promo)
+
+
+@app.route('/order/confirm')
+@login_required
+def confirm():
+    check_everyday_promo()
+    usr = get_curr_user()
+    order_code = request.args.get('order_code')
+    if not order_code:
+        return redirect(url_for('order'))
+    _order = ApexOrder.query.filter_by(confirm_code=order_code).first()
+    if not _order or _order.status != -1:
+        flash('Заказ не найден')
+        return redirect(url_for('order'))
+    promo = _order.used_promo
+    _promo = None
+    if promo:
+        _promo = Promo.query.filter_by(code=promo).first()
+        if not _promo or _promo.uses_left <= 0:
+            _promo = None
+    price1 = round(_order.price, 2)
+    price2 = 0
+    if _promo:
+        price2, _promo = calculate_with_promo(_order.price, _promo, ret_promo=True)
+    return render_template('order_confirm.html', css=url_for('static', filename='css/order.css'),
+                           user=usr, promo=None, used_promo=_promo, order=_order,
+                           price1=price1, price2=price2)
+
+
+@app.route('/order/confirm/<string:order_id>')
+@login_required
+def confirm_by_id(order_id):
+    action = request.args.get('action')
+    usr = get_curr_user()
+    if not action or action not in ('accept', 'reject'):
+        flash('Неизвестное действие')
+        return redirect(url_for('order'))
+    _order = ApexOrder.query.filter_by(confirm_code=order_id).first()
+    if not _order or _order.status != -1 or (_order.requestor_id != usr.id and usr.admin_status < 2):
+        flash('Заказ не найден')
+        return redirect(url_for('order'))
+    if action == 'accept':
+        price = _order.price
+        _promo = None
+        if _order.used_promo:
+            price, _promo = calculate_with_promo(price, _order.used_promo, ret_promo=True)
+        if usr.balance >= price:
+            _order.price = round(price, 2)
+            usr.balance = round(usr.balance - price, 2)
+            _order.status = 0
+            if _promo and _promo.uses_left > 0:
+                _promo.uses_left -= 1
+            db.session.commit()
+            flash('Заказ создан! Ожидайте принятия одним из наших бустеров!', 'succ')
+            return redirect(url_for('myorders'))
+        else:
+            flash('Недостаточно средств на балансе. Пожалуйста, пополните баланс')
+            return redirect(url_for('topup'))
+    else:
+        db.session.delete(_order)
+        db.session.commit()
+        flash('Заказ отменен', 'succ')
+        return redirect(url_for('order'))
+
+
+@app.route('/profile/myorders')
+@login_required
+def myorders():
+    usr = get_curr_user()
+    orders = ApexOrder.query.filter_by(requestor_id=usr.id).all()
+    return render_template('myorders.html', css=url_for('static', filename='css/myorders.css'),
+                           orders=orders, user=usr)
+
+
+@app.route('/profile/myorders/<int:order_id>')
+@login_required
+def myorders_id(order_id):
+    pass
