@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from Site import app, db
-from Site.models import User, Apikey, BalanceRequest, Promo, ApexOrder
+from Site.models import User, Apikey, BalanceRequest, Promo, ApexOrder, Booster
 from Site.settings import *
 from Site.api import create_apikey
 
@@ -378,7 +378,47 @@ def myorders():
                            orders=orders, user=usr)
 
 
-@app.route('/profile/myorders/<int:order_id>')
+@app.route('/profile/myorders/order')
+def order_action():
+    usr = get_curr_user()
+    action = request.args.get('action')
+    _order = ApexOrder.query.filter_by(confirm_code=request.args.get('order_code')).first()
+    if action not in ('confirm', 'cancel'):
+        flash('Недостаточно аргументов')
+        return redirect(url_for('myorders'))
+    if not _order or _order.requestor_id != usr.id:
+        flash('Заказ не найден')
+        return redirect(url_for('myorders'))
+    if action == 'confirm':
+        if _order.status == 2:
+            _order.status = 3
+            booster = Booster.query.filter_by(user_id=_order.booster_id).first()
+            if booster:
+                booster.output_balance += round(order.price, 2)
+            db.session.commit()
+            flash('Выполнение заказа подтверждено! Деньги отправлены исполнителю.', 'succ')
+        else:
+            flash('Что-то пошло не так, попробуйте ещё раз')
+    else:
+        if _order.status == 0:
+            _order.status = 4
+            usr.balance += round(_order.price, 2)
+            db.session.commit()
+            flash('Заказ отменен. Деньги возвращены на баланс.', 'succ')
+        else:
+            flash('Что-то пошло не так, попробуйте ещё раз')
+    return redirect(url_for('myorders_id', order_id=_order.id))
+
+
+@app.route('/profile/myorders/order/<int:order_id>')
 @login_required
 def myorders_id(order_id):
-    pass
+    usr = get_curr_user()
+    _order = ApexOrder.query.filter_by(id=order_id).first()
+    if not _order or _order.requestor_id != usr.id:
+        flash('Заказ не найден')
+        return redirect(url_for('myorders'))
+    return render_template('myorders_show.html',
+                           css=url_for('static', filename='css/myorders.css'),
+                           order=_order, user=usr
+                           )
