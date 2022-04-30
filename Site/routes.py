@@ -393,6 +393,7 @@ def order_action():
     if action == 'confirm':
         if _order.status == 2:
             _order.status = 3
+            _order.date_done = datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S')
             booster = Booster.query.filter_by(user_id=_order.booster_id).first()
             if booster:
                 booster.output_balance += round(order.price, 2)
@@ -403,6 +404,7 @@ def order_action():
     else:
         if _order.status == 0:
             _order.status = 4
+            _order.date_canceled = datetime.datetime.now().strftime('%d.%m.%Y.%H.%M.%S')
             usr.balance += round(_order.price, 2)
             db.session.commit()
             flash('Заказ отменен. Деньги возвращены на баланс.', 'succ')
